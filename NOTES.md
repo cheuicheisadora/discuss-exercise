@@ -193,3 +193,7 @@ You pointed out that the Type / Status / Year dropdown showed the browser's nati
   - Lighthouse accessibility 100;
   - the full keyboard walkthrough and the 22 motion checks pass;
   - layout shift 0.
+
+## 12. Classic list titles show the out-of-scope message (round 4)
+
+You asked that clicking an event in the Classic list should not jump to the branch page. Each title is now a button (styled exactly as before; the screen is pixel-identical when nothing is pressed). It shows the same toast as "Open full event": "In the full product, this opens the full event page for {title}." The page stays on the Classic list. Verified with mouse and keyboard; axe reports 0 violations.

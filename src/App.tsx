@@ -148,7 +148,7 @@ export function App() {
       break;
     case 'classic':
       section = 'classic';
-      view = <ClassicList announce={announce} />;
+      view = <ClassicList announce={announce} notify={notify} />;
       break;
   }
 

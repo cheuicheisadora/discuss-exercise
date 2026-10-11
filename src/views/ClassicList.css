@@ -28,7 +28,16 @@
 }
 .classic__sort:hover { color: var(--color-text-primary); }
 .classic__arrow { font-size: var(--font-size-14); }
-.classic__title { color: var(--color-brand-primary); text-decoration: none; border-radius: var(--radius-sm); }
+.classic__title {
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--color-brand-primary);
+  text-align: left;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
 .classic__title:hover { text-decoration: underline; }
 
 /* Motion */

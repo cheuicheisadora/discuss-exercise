@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { EVENTS, type LibraryEvent } from '../data';
 import { StatusBadge } from '../components/StatusBadge';
 import { branchName, byDateAsc, longDate, statusOf } from '../selectors';
-import { branchHref } from './MyEvents';
+import { actionMessage, type Notify } from './shared';
 import './ClassicList.css';
 
 type Col = 'date' | 'title' | 'branch' | 'room' | 'status';
@@ -33,7 +33,7 @@ function compare(col: Col, a: LibraryEvent, b: LibraryEvent) {
   }
 }
 
-export function ClassicList({ announce }: { announce: (m: string) => void }) {
+export function ClassicList({ announce, notify }: { announce: (m: string) => void; notify: Notify }) {
   const [sort, setSort] = useState<{ col: Col; dir: 1 | -1 }>({ col: 'date', dir: 1 });
   const rows = [...EVENTS].sort((a, b) => sort.dir * compare(sort.col, a, b));
 
@@ -82,9 +82,13 @@ export function ClassicList({ announce }: { announce: (m: string) => void }) {
                 <tr key={e.id}>
                   <td className="t-body">{e.date ? longDate(e.date) : e.target ?? 'No date yet'}</td>
                   <td>
-                    <a className="classic__title t-button" href={branchHref(e)}>
+                    <button
+                      type="button"
+                      className="classic__title t-button"
+                      onClick={() => notify(actionMessage('Open full event', e))}
+                    >
                       {e.title}
-                    </a>
+                    </button>
                   </td>
                   <td className="t-body">{branchName(e.branch)}</td>
                   <td className="t-body">{e.room ?? '—'}</td>
