@@ -1,0 +1,32 @@
+.select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  height: var(--size-control-md);
+  padding: 0 var(--space-12) 0 var(--space-16);
+  background: var(--color-bg-surface);
+  border: var(--border-width-1) solid var(--color-border-control);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.select:hover { background: var(--color-bg-subtle); }
+.select:focus-within {
+  outline: var(--size-focus-ring) solid var(--color-brand-primary);
+  outline-offset: var(--size-focus-ring);
+}
+.select__chevron { width: var(--size-icon-sm); height: var(--size-icon-sm); flex-shrink: 0; }
+/* Invisible native control on top of the styled box: keeps native keyboard + screen reader behaviour. */
+.select__native {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: 0;
+  appearance: none;
+  outline: none;
+}

@@ -1,0 +1,17 @@
+.profile { display: flex; align-items: center; gap: var(--space-12); flex-shrink: 0; }
+.profile__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-avatar);
+  height: var(--size-avatar);
+  border-radius: var(--radius-full);
+  background: var(--color-brand-primary-soft);
+  color: var(--color-brand-primary);
+}
+.profile__text { display: flex; flex-direction: column; white-space: nowrap; }
+.profile__name { color: var(--color-text-primary); }
+.profile__role { color: var(--color-text-muted); }
+@media (max-width: 1199px) {
+  .profile__text { position: absolute; width: var(--border-width-1); height: var(--border-width-1); overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}

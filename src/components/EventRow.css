@@ -1,0 +1,57 @@
+.event-row { position: relative; width: 100%; }
+
+.event-row__main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+  width: 100%;
+  /* right padding reserves the fixed 288px status column */
+  padding: var(--space-16) calc(var(--space-24) + var(--size-status-col) + var(--space-24)) var(--space-16) var(--space-16);
+  background: var(--color-bg-surface);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.event-row__main:hover { border-color: var(--color-border-control); }
+.event-row__main--attention,
+.event-row__main--attention:hover { border-color: var(--color-border-danger); }
+.event-row__main--selected,
+.event-row__main--selected:hover {
+  border: var(--border-width-2) solid var(--color-brand-primary);
+}
+
+.event-row__info { display: flex; flex-direction: column; gap: var(--space-4); flex: 1 1 0; min-width: 0; }
+.event-row__title { color: var(--color-text-primary); overflow-wrap: anywhere; }
+.event-row__meta { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4) var(--space-12); }
+.event-row__details { color: var(--color-text-muted); }
+
+.event-row__status {
+  position: absolute;
+  top: 50%;
+  right: var(--space-24);
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-12);
+  width: var(--size-status-col);
+  /* clicks on the badge fall through to the row; only the action button captures them */
+  pointer-events: none;
+}
+.event-row__status .btn { pointer-events: auto; }
+
+@media (max-width: 699px) {
+  .event-row__main { padding-right: var(--space-16); flex-wrap: wrap; }
+  .event-row__status {
+    position: static;
+    transform: none;
+    width: auto;
+    justify-content: flex-start;
+    padding: 0 var(--space-16) var(--space-16) calc(var(--space-16) + var(--size-date-tile) + var(--space-24));
+    margin-top: calc(-1 * var(--space-12));
+    pointer-events: auto;
+  }
+}

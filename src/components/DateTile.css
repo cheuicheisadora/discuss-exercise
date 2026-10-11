@@ -1,0 +1,15 @@
+.date-tile {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--size-date-tile);
+  height: var(--size-date-tile);
+  border-radius: var(--radius-lg);
+  white-space: nowrap;
+}
+.date-tile--default { background: var(--color-brand-primary-soft); }
+.date-tile--default .date-tile__month { color: var(--color-brand-primary); }
+.date-tile--default .date-tile__day { color: var(--color-text-primary); }
+.date-tile--empty { background: var(--color-bg-subtle); color: var(--color-text-muted); }

@@ -1,0 +1,19 @@
+.branch-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  text-align: left;
+}
+.branch-title__chevron { width: var(--size-icon-lg); height: var(--size-icon-lg); flex-shrink: 0; }
+/* Hover/focus = blue + underline (Figma "State=Hover") */
+.branch-title:hover,
+.branch-title:focus-visible,
+.branch-title[aria-expanded='true'] { color: var(--color-brand-primary); }
+.branch-title:hover .branch-title__name,
+.branch-title:focus-visible .branch-title__name { text-decoration: underline; }

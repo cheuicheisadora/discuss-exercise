@@ -1,0 +1,8 @@
+.count {
+  display: inline-flex;
+  justify-content: center;
+  padding: 0 var(--space-8);
+  border-radius: var(--radius-lg);
+  background: var(--color-status-danger-bg);
+  color: var(--color-status-danger-fg);
+}

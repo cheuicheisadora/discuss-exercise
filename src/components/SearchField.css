@@ -1,0 +1,45 @@
+.search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  height: var(--size-control-md);
+  padding: 0 var(--space-8) 0 var(--space-16);
+  background: var(--color-bg-subtle);
+  border: var(--border-width-1) solid var(--color-border-control);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  min-width: 0;
+}
+.search-field:focus-within {
+  outline: var(--size-focus-ring) solid var(--color-brand-primary);
+  outline-offset: var(--size-focus-ring);
+}
+.search-field--global { width: var(--size-search-global); min-width: var(--size-search-min); flex-shrink: 1; }
+.search-field--page { width: var(--size-search-page); max-width: 100%; }
+.search-field--menu { width: 100%; }
+.search-field__icon { width: var(--size-icon-md); height: var(--size-icon-md); flex-shrink: 0; }
+.search-field__input {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  /* the wrapper draws the focus ring for the whole pill */
+  outline: none;
+}
+.search-field__input::placeholder { color: var(--color-text-muted); opacity: 1; }
+.search-field__input::-webkit-search-cancel-button { cursor: pointer; }
+.search-field__shortcut {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-8);
+  background: var(--color-bg-surface);
+  border: var(--border-width-1) solid var(--color-border-control);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-family: var(--font-family);
+}

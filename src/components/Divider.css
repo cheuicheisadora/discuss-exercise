@@ -1,0 +1,6 @@
+.divider {
+  flex-shrink: 0;
+  width: 100%;
+  height: var(--border-width-1);
+  background: var(--color-border-default);
+}

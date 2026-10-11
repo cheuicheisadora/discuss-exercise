@@ -1,0 +1,33 @@
+.topbar {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-24);
+  height: var(--size-topbar);
+  flex-shrink: 0;
+  padding: 0 var(--space-40);
+  background: var(--color-bg-surface);
+  border-bottom: var(--border-width-1) solid var(--color-border-default);
+}
+.topbar__left { display: flex; align-items: center; gap: var(--space-40); height: 100%; flex-shrink: 0; }
+.topbar__logo { margin: 0; color: var(--color-text-primary); white-space: nowrap; }
+.topbar__logo-brand { color: var(--color-brand-primary); }
+.topbar__nav { display: flex; align-items: flex-start; gap: var(--space-32); height: 100%; }
+.topbar__right { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-24); min-width: 0; flex: 1 1 auto; }
+.topbar__search { display: flex; min-width: 0; flex: 0 1 auto; }
+.menu-anchor { position: relative; }
+
+.topbar .btn svg { width: var(--size-icon-md); height: var(--size-icon-md); }
+
+@media (max-width: 1099px) {
+  .topbar { padding: 0 var(--space-16); gap: var(--space-16); }
+  .topbar__left { gap: var(--space-24); }
+  .topbar__nav { gap: var(--space-16); }
+  .topbar__right { gap: var(--space-12); }
+}
+@media (max-width: 799px) {
+  .topbar__right .btn span { position: absolute; width: var(--border-width-1); height: var(--border-width-1); overflow: hidden; clip: rect(0 0 0 0); }
+  .topbar__right .profile { display: none; }
+}
