@@ -29,7 +29,7 @@ A log of what was built, where it deviates from Figma and why, and what I (Claud
 | 2 | Branch menu ARIA | Component description says `aria-haspopup="menu"` | Non-modal `dialog` containing a `combobox` input and a `listbox` with `group`s. Triggers use `aria-haspopup="dialog"` | A `role="menu"` can't contain a text input. The combobox/listbox pattern is the correct one for a filterable list. axe and Lighthouse both pass. |
 | 3 | Branch title | A `div` with text + chevron | A `<button>` inside the page `<h1>`, with `aria-label="Switch branch, current: X"` | The Figma description itself asks for a button with that label. Putting it in the h1 keeps "one h1 per view". |
 | 4 | Focus ring on Search field and Select | Not drawn | 2px ring on the pill/box wrapper (`:focus-within`). The inner input/select has `outline: none` | Otherwise the ring would draw around an invisible native control. The ring is still 2px `--color-brand-primary` with a 2px offset, as the brief specifies. **Honest note:** the brief says "never remove outlines". Technically I moved the outline from the inner element to its visible container rather than keeping it on the element. |
-| 5 | Select | Figma draws a custom box | A native `<select>`, invisible, layered over a box styled exactly like Figma | Light and fully accessible on old library computers. The open dropdown list looks like the OS default, not Figma (Figma doesn't draw an open state). |
+| 5 | Select | Figma draws a custom box, no open state | ~~A native `<select>` under the styled box~~ → **replaced in round 3** with a custom listbox in the Branch menu style (see section 11) | The native popup looked like the OS default and didn't match the Branch menu; you asked for the same style. |
 | 6 | Preview subtitle wrap (screen 04) | Wraps as "…West Ashley ·" / "Room A" | Each part is kept on one line, so it wraps as "…10:00 am ·" / "West Ashley · Room A" | Our font rendering is a few pixels wider than Figma's, so "West Ashley" was splitting across lines. |
 | 7 | Page side padding | 120px at 1440 | `clamp(40px, (100vw − 1200px)/2, 120px)` | At 1280 with a fixed 120px, row details wrapped mid-word ("Reading / room"). The content now stays 1200px wide down to 1280. Identical to Figma at 1440. |
 | 8 | Hover states | Only Branch title and Branch item have a Hover variant | Small hover feedback on buttons, rows, tabs and selects, using token colors only | Not drawn in Figma. I kept them subtle; you may want to remove them. |
@@ -169,3 +169,27 @@ Brief: make it feel smooth and polished without changing logic, data, routes, co
 - **Below 1100px the overlay preview** has no backdrop and no click-outside-to-close, and rows behind it stay in the Tab order.
 - **A sticky header for the Classic list.**
 - **The focus ring on the page title after navigation** looks heavy. It's correct, so I left it as a design decision.
+
+---
+
+## 11. Filter dropdowns in the Branch menu style (round 3)
+
+You pointed out that the Type / Status / Year dropdown showed the browser's native list (blue OS highlight, square box), unlike the Branch menu. CSS can't style a native `<select>` popup, so I replaced it with a custom listbox.
+
+- **Trigger:** unchanged. It's the same Figma Select, pixel-identical when closed (verified against production on 12 screens). It is now a real `<button aria-haspopup="listbox" aria-expanded>`, and its name reads "Type: All". The chevron rotates while open, as on the Branch menu.
+- **Menu:** the same tokens as the Branch menu: surface, 1px default border, `--radius-lg`, `--shadow-menu`, 8px padding, items with 8/12px padding, `--radius-md`, and the `--color-brand-primary-soft` hover/active background. The current value is shown in brand blue. Same entrance and exit animation. Width fits the longest option (at least the trigger width).
+- **Keyboard:**
+  - Enter / Space / ↑ / ↓ open it, with focus on the list and the current value active.
+  - ↑ ↓ Home End and typing a first letter move the active option.
+  - Enter / Space choose and return focus to the button.
+  - Esc closes without changing the value and returns focus. That Esc doesn't also close the event preview.
+  - Tab closes it. A click outside closes it.
+  - A visible focus ring sits on the active option when the list is opened from the keyboard.
+- **Not copied from the Branch menu:** hover-to-open. Filters are a deliberate choice, and opening them on hover would get in the way while you move the mouse across the toolbar.
+- **Logic is unchanged:** the same `Select` props (label, value, options, onChange), so filtering and announcements work as before.
+- **Verified:**
+  - 19 checks: mouse, keyboard, type-ahead, Esc / Tab / outside-click, focus return, Year and Type on branch and My past pages;
+  - axe with the list open: 0 violations;
+  - Lighthouse accessibility 100;
+  - the full keyboard walkthrough and the 22 motion checks pass;
+  - layout shift 0.

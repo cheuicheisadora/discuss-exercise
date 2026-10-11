@@ -185,8 +185,7 @@ a { color: var(--color-brand-primary); }
 /* Focus ring: visible on the first frame; only its offset settles outward. Never delayed. */
 a:focus-visible,
 button:focus-visible,
-.search-field:focus-within,
-.select:focus-within {
+.search-field:focus-within {
   animation: le-focus-in var(--duration-fast) var(--ease-out);
 }
 
@@ -197,6 +196,5 @@ button:focus-visible,
   /* the focus ring offset movement is motion too */
   a:focus-visible,
   button:focus-visible,
-  .search-field:focus-within,
-  .select:focus-within { animation: none; }
+  .search-field:focus-within { animation: none; }
 }
