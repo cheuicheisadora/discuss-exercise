@@ -61,11 +61,18 @@ A log of what was built, where it deviates from Figma and why, and what I (Claud
 - I killed my own shell with `pkill -f vite`, because the pattern matched the command itself, so the first commit attempt didn't happen. I re-ran it.
 - A 404 for `favicon.ico` showed in the console. I added an inline SVG favicon.
 
-## 6. Security issue found in the repo (not part of the brief)
+## 6. Security issue found in the original repo (not part of the brief)
 
-The only file that was in the repo before this work, `.github/workflows/main.yml`, actually contained an `.env` file with a real Neon database URL (including the password) and a Resend API key. The repository is **public**. I flagged it, and you rotated the password. I removed the file and added an empty `.env.example` plus `.env*.local` in `.gitignore`. The old values are still in git history; they're harmless once rotated. I couldn't rotate them myself, because this session had no access to Neon or Resend.
+I first built this on a branch of an unrelated repo ("Multitudes"). The only file that was in that repo, `.github/workflows/main.yml`, actually contained an `.env` file with a real Neon database URL (including the password) and a Resend API key. The repository is **public**. I flagged it, and you rotated the password. I removed the file and added an empty `.env.example` plus `.env*.local` in `.gitignore`. The old values are still in git history; they're harmless once rotated. I couldn't rotate them myself, because this session had no access to Neon or Resend.
 
-## 7. Verification results
+## 7. Moving to its own repo and deploying
+
+- You asked for this to be a separate project, not connected to Multitudes. I prepared a clean copy with a fresh, single-commit history. That way none of the Multitudes history, including the leaked-secrets commit, came along. I also dropped the Multitudes `.env.example`, which isn't relevant to this app.
+- **What I could not do myself:** this session's GitHub and Vercel connectors returned 403 when I tried to create the GitHub repo, create the Vercel project and change project settings. You created the empty `discuss-exercise` repo and imported it on Vercel; I pushed the code and verified the result.
+- **Deployment Protection:** the new Vercel project came with Vercel Authentication set to "all except custom domains". I couldn't change that setting (403). In practice, the production domain **https://discuss-exercise-livid.vercel.app** answers 200 with no login. The other aliases (`…-cheuicheisadoras-projects.vercel.app` and deployment-specific URLs) still redirect to a Vercel login. If every alias should be public, turn Vercel Authentication off under Project → Settings → Deployment Protection.
+- **Live check in a fresh browser session (no cookies, like a private window):** I re-ran the keyboard-only walkthrough and axe (0 violations) on the live URL, and took screenshots of the 5 screens. They are pixel-identical to the local build that was compared with Figma.
+
+## 8. Verification results
 
 - **Figma overlay at 1440×1024, 5 screens:** the only differences are deviations 1 and 6.
 - **axe-core** (WCAG 2.0/2.1/2.2 A+AA + best practices): 0 violations in 15 states at 1440px and at 1000px.
@@ -75,7 +82,7 @@ The only file that was in the repo before this work, `.github/workflows/main.yml
 - **No horizontal overflow** at 760, 1000, 1280, 1440 and 1920px.
 - **`npm run build`** (strict TypeScript) is clean.
 
-## 8. What I did not do
+## 9. What I did not do
 
 - No real flows for New event, Book room, Schedule, Open full event or Reuse; they show a toast, as the brief asked.
 - No mobile layout. Below about 700px it stays usable and never overflows sideways, but it wasn't designed.

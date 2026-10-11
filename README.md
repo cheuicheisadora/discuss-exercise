@@ -1,5 +1,7 @@
 # Library Events: prototype
 
+**Live:** https://discuss-exercise-livid.vercel.app
+
 An interactive prototype of a browse-and-navigate tool for library events coordinators, built from the **DashStack › Library Events** Figma file. The 5 Figma screens are states of one single-page app.
 
 - **Stack:** Vite + React 18 + TypeScript, plain CSS with custom properties. No UI library, no router library, no animation library. The JS bundle is about 60 KB gzipped.
