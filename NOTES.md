@@ -188,7 +188,7 @@ You pointed out that the Type / Status / Year dropdown showed the browser's nati
 - **Not copied from the Branch menu:** hover-to-open. Filters are a deliberate choice, and opening them on hover would get in the way while you move the mouse across the toolbar.
 - **Logic is unchanged:** the same `Select` props (label, value, options, onChange), so filtering and announcements work as before.
 - **Verified:**
-  - 19 checks: mouse, keyboard, type-ahead, Esc / Tab / outside-click, focus return, Year and Type on branch and My past pages;
+  - 18 checks: mouse, keyboard, type-ahead, Esc / Tab / outside-click, focus return, Year and Type on branch and My past pages;
   - axe with the list open: 0 violations;
   - Lighthouse accessibility 100;
   - the full keyboard walkthrough and the 22 motion checks pass;
