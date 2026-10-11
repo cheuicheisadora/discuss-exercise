@@ -43,3 +43,7 @@
   color: var(--color-text-muted);
   font-family: var(--font-family);
 }
+
+/* Motion */
+.search-field { transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard); }
+.search-field:hover { border-color: var(--color-text-secondary); }

@@ -88,3 +88,84 @@ I first built this on a branch of an unrelated repo ("Multitudes"). The only fil
 - No mobile layout. Below about 700px it stays usable and never overflows sideways, but it wasn't designed.
 - No automated test suite in the repo. The verification scripts lived in a scratch folder.
 - I didn't test with a real screen reader (NVDA, VoiceOver). The ARIA was checked only by axe and Lighthouse, and by inspecting the code.
+
+---
+
+## 10. Motion and interaction polish (round 2)
+
+Brief: make it feel smooth and polished without changing logic, data, routes, copy, layout, colors, spacing or component structure. I analysed every state first, then you said "decide what's best and do it". No animation library: CSS transitions/keyframes, plus small JS only where CSS can't do it (exit animations, the tab indicator, hover intent).
+
+### Tokens added to `tokens.css`
+- Durations: `--duration-fast` 120ms (hover, press, focus), `--duration-base` 180ms (menus, tabs, row selection, lists), `--duration-slow` 240ms (panels, toasts, empty states).
+- Easing: `--ease-out` (entering), `--ease-in` (leaving), `--ease-standard` (state changes). No bounce, no overshoot.
+- Distances and scales: `--motion-shift-sm` 4px, `--motion-shift-md` 8px, `--motion-scale-from` 0.98, `--motion-press` 0.98, `--motion-press-row` 0.995, `--motion-stagger` 30ms, `--motion-stagger-max` 6.
+- Hover intent: `--hover-open-delay` 120ms, `--hover-close-delay` 200ms. JS reads these from CSS, so there's one source of truth.
+- **Reduced motion:** under `prefers-reduced-motion: reduce`, the distance and stagger tokens become 0, scale becomes 1, and base/slow durations become 120ms. Only short opacity fades remain. The sliding tab bar and the focus-ring settle are switched off entirely.
+
+### What animates
+| Element | Motion |
+|---|---|
+| Branch menu | opens: fade + scale 0.98→1 + 4px downward slide, origin at the trigger (base, ease-out). Closes faster (fast, ease-in). Items don't animate one by one. Trigger chevron rotates 180° while open |
+| Branch menu: hover open | see "Hover-open Branch menu" below |
+| Preview panel | opens: fade + 8px slide from the right (slow, ease-out). Switching events: the panel stays and only its content fades (base). Closes: fade + slide out (fast, ease-in), then the empty state fades in |
+| Tabs | the blue bar slides from the old tab to the new one (transform only, FLIP); the panel content fades in |
+| Event rows | hover: border + light shadow (no lift). Press: the whole card scales to 0.995. Selected: the border color transitions |
+| Buttons, selects, search fields, nav items, branch title, "Show 5 more", Classic list rows | color / background / border transitions (fast). Buttons, selects and the branch title press to 0.98 |
+| Lists | rows that newly appear (branch switch, tab switch, widening a filter, search results) rise 4px + fade, staggered 30ms, max 6 staggered. Rows already on screen never re-animate, so typing in search doesn't flicker |
+| Page / view changes | the new view fades in (base) |
+| Toasts | slide up 8px + fade in (slow); fade out on dismiss (base, ease-in) |
+| Empty states | fade in (slow) |
+| Focus ring | visible on the first frame; only its offset settles 0→2px (fast). Never delayed |
+
+### Hover-open Branch menu (WCAG 1.4.13)
+- **Opening:** opens after 120ms of mouse hover on "Branches ▾" or the branch title, so passing over doesn't flicker. It doesn't move focus.
+- **Closing:** closes 200ms after the pointer leaves both the trigger and the menu. An invisible 4px "bridge" covers the gap, so a diagonal move into the menu works.
+- **WCAG 1.4.13:** the menu stays open while hovered, Esc dismisses it without moving the pointer (a document-level listener; focus stays where it was), and it never covers its trigger.
+- **Click and keyboard:**
+  - Click / Enter / Space open it with focus in the filter, as before.
+  - ArrowDown on the trigger now does the same. The brief listed it as existing behaviour, but it wasn't implemented, so I added it.
+  - Clicking a hover-opened menu keeps it open and moves focus in (like Linear and Radix); a second click closes it.
+  - Once focus is inside, it no longer closes on pointer leave.
+- **Touch:** only `pointerType: mouse` on a hover-capable device triggers hover; touch taps work as before.
+- **aria-expanded** always matches the real state. While the menu animates out it is `inert` and `aria-hidden`.
+
+### Non-motion fixes I made (no layout or logic change)
+1. **Screen-reader names had no spaces.** They read "Upcoming3", "Oct14Kids story hour", "West Ashley2 this week". I added whitespace text nodes; inside flex containers they aren't rendered, so the pixels are unchanged. Names now read "Upcoming 3", "Oct 14 Kids story hour …".
+2. **Attention rows now get hover feedback** (the shadow). Their red border stays.
+3. **The open menu's trigger now shows its state:** the "Branches" label turns dark and the chevron points up. This is the only visible change in a resting state (screen 02).
+
+### Things I chose not to animate, and why
+- **Removed rows** when a filter narrows the list just disappear. Animating them out would delay the list and needs layout animation.
+- **Classic list sorting:** reordering a 62-row table with motion would be distracting, not explanatory.
+- **No real two-view page crossfade:** keeping the old view on screen while the new one fades in would render two pages and delay content. The new view fades in instead, and the old one leaves at once.
+- **No lift on rows**, only a shadow: a 1px jump on a long list looks jittery.
+- **No skeletons, no bounce, no stagger longer than 6 items.**
+
+### Bugs found while verifying (fixed)
+- **Reopening the menu during its 120ms close animation** (Esc then Enter quickly) left focus on the trigger. Focus was moved before the `inert` flag was cleared; I fixed the order.
+- **The first version of the sliding tab bar** (one bar positioned with `scaleX`) differed from the approved design at rest: square corners, and sub-pixel edges. The final version shows the shared bar only during the slide and hands back to each tab's own bar, so resting states are pixel-identical.
+
+### Verification
+- **Pixel comparison of 12 resting states, old build vs new, at 1440×1024:** identical (max difference 1/255, invisible), except screen 02 (fix 3 above).
+- **22 automated interaction checks:**
+  - hover intent (a quick pass doesn't open it);
+  - diagonal move into the menu;
+  - close delay;
+  - Esc on a hover-open menu;
+  - hover-then-click;
+  - the pinned menu staying open;
+  - touch tap;
+  - ArrowDown;
+  - Esc→Enter during the exit animation;
+  - rows clickable during their entrance;
+  - toast;
+  - reduced motion (computed tokens 0/1, no transform, no slide).
+- **Layout shift:** the only shift is the pre-existing 2px selected-row border, identical on the approved build. Lighthouse CLS is 0.
+- **Keyboard-only walkthrough, axe** (0 violations at 1440 and 1000px) and **Lighthouse accessibility 100** on 5 routes. Every count and label is identical to before. `npm run build` is clean.
+
+### Suggested, not changed (would change layout or logic)
+- **Selecting a row shifts the rows below by 2px**, because the border goes from 1px to 2px, as in Figma. An inset shadow would remove the jump, but it changes the layout.
+- **Toasts vanish after 6 seconds** and don't pause on hover or focus (WCAG 2.2.1); that needs a logic change.
+- **Below 1100px the overlay preview** has no backdrop and no click-outside-to-close, and rows behind it stay in the Tab order.
+- **A sticky header for the Classic list.**
+- **The focus ring on the page title after navigation** looks heavy. It's correct, so I left it as a design decision.

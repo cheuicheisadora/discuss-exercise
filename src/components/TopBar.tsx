@@ -1,4 +1,5 @@
-import { forwardRef, useEffect, useState, type ReactNode } from 'react';
+import { forwardRef, useEffect, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import { TOPBAR_MENU_TRIGGER } from '../useBranchMenu';
 import { CURRENT_USER } from '../data';
 import { IconList } from '../icons';
 import { Button } from './Button';
@@ -9,18 +10,17 @@ import './TopBar.css';
 
 export interface TopBarProps {
   section: 'my-events' | 'branches' | 'classic' | null;
-  menuOpen: boolean;
-  onToggleMenu: () => void;
+  menuTrigger: { expanded: boolean; onClick: () => void; onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void };
+  menuHover: { onPointerEnter: (e: PointerEvent) => void; onPointerLeave: (e: PointerEvent) => void };
   /** Branch menu, rendered under the "Branches" trigger when open from the top bar. */
   menu?: ReactNode;
   searchValue: string;
   onSearch: (q: string) => void;
 }
 
-export const TOPBAR_MENU_TRIGGER = 'branches-trigger';
 
 export const TopBar = forwardRef<HTMLInputElement, TopBarProps>(function TopBar(
-  { section, menuOpen, onToggleMenu, menu, searchValue, onSearch },
+  { section, menuTrigger, menuHover, menu, searchValue, onSearch },
   searchRef,
 ) {
   const [q, setQ] = useState(searchValue);
@@ -34,14 +34,15 @@ export const TopBar = forwardRef<HTMLInputElement, TopBarProps>(function TopBar(
         </p>
         <nav className="topbar__nav" aria-label="Main">
           <NavItem label="My events" state={section === 'my-events'} href="#/my-events" />
-          <div className="menu-anchor">
+          <div className="menu-anchor" {...menuHover}>
             <NavItem
               id={TOPBAR_MENU_TRIGGER}
               label="Branches"
               showChevron
               state={section === 'branches'}
-              expanded={menuOpen}
-              onClick={onToggleMenu}
+              expanded={menuTrigger.expanded}
+              onClick={menuTrigger.onClick}
+              onKeyDown={menuTrigger.onKeyDown}
             />
             {menu}
           </div>

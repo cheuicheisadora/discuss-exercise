@@ -17,6 +17,14 @@ export interface BranchMenuProps {
   /** Element(s) that toggle the menu; clicks on them are not "outside". */
   triggerId: string;
   announce: (msg: string) => void;
+  /** Which trigger the menu hangs from (sets the transform origin). */
+  anchor: 'nav' | 'title';
+  /** Animating out: not interactive, hidden from assistive tech. */
+  exiting: boolean;
+  /** Non-zero when opened by click/keyboard: focus moves into the filter. Hover-open passes 0. */
+  focusToken: number;
+  /** Focus entered the menu. */
+  onPin: () => void;
 }
 
 interface Option {
@@ -25,7 +33,7 @@ interface Option {
   group: 'all' | 'yours' | 'others';
 }
 
-export function BranchMenu({ current, onSelect, onClose, triggerId, announce }: BranchMenuProps) {
+export function BranchMenu({ current, onSelect, onClose, triggerId, announce, anchor, exiting, focusToken, onPin }: BranchMenuProps) {
   const uid = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -53,10 +61,17 @@ export function BranchMenu({ current, onSelect, onClose, triggerId, announce }: 
   const initialActive = Math.max(0, options.findIndex((o) => o.scope === current));
   const [active, setActive] = useState(initialActive);
 
-  // Focus moves into the menu when it opens.
+  // While animating out the menu is inert: no clicks, no focus, hidden from screen readers.
+  // (Runs before the focus effect so a reopen during the exit can take focus.)
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    if (exiting) rootRef.current?.setAttribute('inert', '');
+    else rootRef.current?.removeAttribute('inert');
+  }, [exiting]);
+
+  // Focus moves into the menu only when it was opened by click or keyboard (not on hover).
+  useEffect(() => {
+    if (focusToken) inputRef.current?.focus();
+  }, [focusToken]);
 
   // Keep the active option in view.
   useEffect(() => {
@@ -150,9 +165,13 @@ export function BranchMenu({ current, onSelect, onClose, triggerId, announce }: 
   const listboxId = `${uid}-listbox`;
 
   return (
+    <>
+    <div className="branch-menu__bridge" aria-hidden="true" />
     <div
       ref={rootRef}
-      className={`branch-menu ${keyboard ? 'branch-menu--keyboard' : ''}`}
+      className={`branch-menu branch-menu--${anchor} ${keyboard ? 'branch-menu--keyboard' : ''} ${exiting ? 'branch-menu--exiting' : ''}`}
+      aria-hidden={exiting || undefined}
+      onFocus={onPin}
       role="dialog"
       aria-label="Choose a branch"
       onKeyDown={onRootKeyDown}
@@ -206,6 +225,7 @@ export function BranchMenu({ current, onSelect, onClose, triggerId, announce }: 
         </button>
       )}
     </div>
+    </>
   );
 }
 

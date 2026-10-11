@@ -1,21 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BranchMenu } from './components/BranchMenu';
 import { Toast } from './components/Toast';
-import { TopBar, TOPBAR_MENU_TRIGGER } from './components/TopBar';
+import { TopBar } from './components/TopBar';
 import { navigate, pageKey, useRoute } from './router';
 import { getBranch, getEvent, isPast, type Scope } from './selectors';
-import { BranchView, TITLE_MENU_TRIGGER } from './views/BranchView';
+import { BranchView } from './views/BranchView';
+import { TITLE_MENU_TRIGGER, TOPBAR_MENU_TRIGGER, useBranchMenu, type MenuAnchor } from './useBranchMenu';
 import { ClassicList } from './views/ClassicList';
 import { MyEvents } from './views/MyEvents';
 import { MyPastEvents } from './views/MyPastEvents';
 import { SearchResults } from './views/SearchResults';
 import { EmptyState, rowId } from './views/shared';
 
-type MenuAnchor = 'nav' | 'title' | null;
-
 export function App() {
   const route = useRoute();
-  const [menu, setMenu] = useState<MenuAnchor>(null);
+  const menu = useBranchMenu();
+  const closeMenu = menu.close;
   const [toast, setToast] = useState<string | null>(null);
   const [liveMsg, setLiveMsg] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
@@ -42,7 +42,7 @@ export function App() {
       const t = e.target as HTMLElement;
       if (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName)) return;
       e.preventDefault();
-      setMenu(null);
+      closeMenu(false);
       searchRef.current?.focus();
       searchRef.current?.select();
     };
@@ -56,7 +56,7 @@ export function App() {
   useEffect(() => {
     if (prevKey.current === key) return;
     prevKey.current = key;
-    setMenu(null);
+    closeMenu(false);
     document.getElementById('main')?.scrollTo(0, 0);
     requestAnimationFrame(() => {
       const ev = route.name === 'branch' ? route.event : null;
@@ -72,25 +72,21 @@ export function App() {
 
   /* ---------- Branch menu ---------- */
   const currentScope: Scope | null = route.name === 'branch' ? (route.slug as Scope) : null;
-  const closeMenu = useCallback(
-    (returnFocus: boolean) => {
-      const trigger = menu === 'title' ? TITLE_MENU_TRIGGER : TOPBAR_MENU_TRIGGER;
-      setMenu(null);
-      if (returnFocus) document.getElementById(trigger)?.focus();
-    },
-    [menu],
-  );
   const selectBranch = (scope: Scope) => {
-    setMenu(null);
+    closeMenu(false);
     if (scope === currentScope) {
       document.getElementById('page-title')?.focus();
       return;
     }
     navigate({ name: 'branch', slug: scope, tab: 'upcoming', event: null });
   };
-  const menuEl = (anchor: 'nav' | 'title') =>
-    menu === anchor ? (
+  const menuEl = (anchor: MenuAnchor) =>
+    menu.rendered === anchor ? (
       <BranchMenu
+        anchor={anchor}
+        exiting={menu.exiting}
+        focusToken={menu.open?.anchor === anchor ? menu.open.focusToken : 0}
+        onPin={menu.pin}
         current={currentScope}
         onSelect={selectBranch}
         onClose={closeMenu}
@@ -138,8 +134,8 @@ export function App() {
           scope={route.slug as Scope}
           tab={tab}
           eventId={ev && (route.slug === 'all' || ev.branch === route.slug) ? ev.id : null}
-          menuOpen={menu === 'title'}
-          onToggleMenu={() => setMenu((m) => (m === 'title' ? null : 'title'))}
+          menuTrigger={menu.triggerProps('title')}
+          menuHover={menu.hoverProps('title')}
           menu={menuEl('title')}
           announce={announce}
           notify={notify}
@@ -174,8 +170,8 @@ export function App() {
       <TopBar
         ref={searchRef}
         section={section === 'classic' ? null : section}
-        menuOpen={menu === 'nav'}
-        onToggleMenu={() => setMenu((m) => (m === 'nav' ? null : 'nav'))}
+        menuTrigger={menu.triggerProps('nav')}
+        menuHover={menu.hoverProps('nav')}
         menu={menuEl('nav')}
         searchValue={route.name === 'search' ? route.q : ''}
         onSearch={(q) => navigate({ name: 'search', q })}

@@ -30,3 +30,11 @@
 .nav-item--active .nav-item__indicator { background: var(--color-brand-primary); }
 /* keep the focus ring inside the 72px bar */
 .nav-item:focus-visible { outline-offset: calc(-1 * var(--size-focus-ring)); }
+
+/* Motion */
+.nav-item { transition: color var(--duration-fast) var(--ease-standard); }
+.nav-item__indicator { transition: background-color var(--duration-base) var(--ease-standard); }
+.nav-item__chevron { transition: transform var(--duration-base) var(--ease-standard); }
+/* Open state: the trigger stays highlighted while its menu is open */
+.nav-item[aria-expanded='true']:not(.nav-item--active) { color: var(--color-text-primary); }
+.nav-item[aria-expanded='true'] .nav-item__chevron { transform: rotate(180deg); }

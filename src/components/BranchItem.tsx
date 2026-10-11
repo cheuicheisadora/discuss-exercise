@@ -21,7 +21,7 @@ export function BranchItem({ id, name, summary, state, current, onSelect, onHove
       onClick={onSelect}
       onMouseMove={onHover}
     >
-      <span className="branch-item__name t-button">{name}</span>
+      <span className="branch-item__name t-button">{name}</span>{' '}
       <span className="branch-item__summary t-label">{summary}</span>
     </div>
   );

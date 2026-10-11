@@ -41,11 +41,11 @@ export function EventRow(p: EventRowProps) {
 
   const content = (
     <>
-      <DateTile {...p.date} />
+      <DateTile {...p.date} />{' '}
       <span className="event-row__info">
-        <span className="event-row__title t-heading">{p.title}</span>
+        <span className="event-row__title t-heading">{p.title}</span>{' '}
         <span className="event-row__meta">
-          {p.showTag && p.tag && <Tag label={p.tag} />}
+          {p.showTag && p.tag && <Tag label={p.tag} />}{' '}
           <span className="event-row__details t-body">{p.details}</span>
         </span>
         <span className="sr-only">, {p.status.label}</span>

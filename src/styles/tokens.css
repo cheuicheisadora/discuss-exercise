@@ -76,6 +76,27 @@
   --size-toast-max: 560px;
   --size-focus-ring: 2px;
 
+  /* ---------- Motion ---------- */
+  /* Durations */
+  --duration-fast: 120ms;  /* hover, press, focus */
+  --duration-base: 180ms;  /* menus, tabs, badges, row selection */
+  --duration-slow: 240ms;  /* panels, page and list transitions */
+  /* Easing: no bounce, no overshoot */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);       /* things entering */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);           /* things leaving */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);     /* movement and state changes */
+  /* Distances and scales (set to 0 / 1 under reduced motion) */
+  --motion-shift-sm: 4px;      /* menus, list items */
+  --motion-shift-md: 8px;      /* preview panel, toast */
+  --motion-scale-from: 0.98;   /* menu entrance */
+  --motion-press: 0.98;        /* pressed buttons, selects, titles */
+  --motion-press-row: 0.995;   /* pressed event rows (wide, so smaller) */
+  --motion-stagger: 30ms;      /* delay between list items */
+  --motion-stagger-max: 6;     /* items staggered; the rest enter together */
+  /* Hover intent for the Branch menu */
+  --hover-open-delay: 120ms;
+  --hover-close-delay: 200ms;
+
   /* ---------- Typography (Figma: Library Events/...) ---------- */
   --font-family: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
 
@@ -124,3 +145,17 @@
   text-transform: uppercase;
 }
 .t-date { font: var(--text-date); }
+
+/* Reduced motion: no movement, no scale, no stagger. Only short opacity changes remain. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-base: var(--duration-fast);
+    --duration-slow: var(--duration-fast);
+    --motion-shift-sm: 0px;
+    --motion-shift-md: 0px;
+    --motion-scale-from: 1;
+    --motion-press: 1;
+    --motion-press-row: 1;
+    --motion-stagger: 0ms;
+  }
+}

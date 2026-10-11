@@ -35,3 +35,13 @@
   color: var(--color-text-secondary);
 }
 .btn--neutral:hover { background: var(--color-bg-subtle); }
+
+/* Motion: color feedback on hover, a light press */
+.btn {
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+.btn:active { transform: scale(var(--motion-press)); }

@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, type KeyboardEvent } from 'react';
 import { IconChevronDown } from '../icons';
 import './BranchTitle.css';
 
@@ -6,12 +6,13 @@ export interface BranchTitleProps {
   branchName: string;
   expanded: boolean;
   onClick: () => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
   id?: string;
 }
 
 /** Shows the current branch AND opens the Branch menu. Rendered inside the page <h1>. */
 export const BranchTitle = forwardRef<HTMLButtonElement, BranchTitleProps>(function BranchTitle(
-  { branchName, expanded, onClick, id },
+  { branchName, expanded, onClick, onKeyDown, id },
   ref,
 ) {
   return (
@@ -24,6 +25,7 @@ export const BranchTitle = forwardRef<HTMLButtonElement, BranchTitleProps>(funct
       aria-expanded={expanded}
       aria-label={`Switch branch, current: ${branchName}`}
       onClick={onClick}
+      onKeyDown={onKeyDown}
     >
       <span className="branch-title__name t-display">{branchName}</span>
       <IconChevronDown size={24} className="branch-title__chevron" />

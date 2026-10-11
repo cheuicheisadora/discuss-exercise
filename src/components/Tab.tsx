@@ -27,7 +27,7 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab({ label,
       onKeyDown={onKeyDown}
     >
       <span className="tab__content">
-        <span className="t-button">{label}</span>
+        <span className="t-button">{label}</span>{' '}
         <span className="tab__count t-label">{count}</span>
       </span>
       <span className="tab__indicator" aria-hidden="true" />

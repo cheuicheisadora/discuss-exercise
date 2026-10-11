@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, type KeyboardEvent } from 'react';
 import { IconChevronDown } from '../icons';
 import './NavItem.css';
 
@@ -10,12 +10,13 @@ export interface NavItemProps {
   /** Link target. Without href the item is a button (used by "Branches ▾"). */
   href?: string;
   onClick?: () => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
   expanded?: boolean;
   id?: string;
 }
 
 export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavItem(
-  { label, state, showChevron = false, href, onClick, expanded, id },
+  { label, state, showChevron = false, href, onClick, onKeyDown, expanded, id },
   ref,
 ) {
   const cls = `nav-item ${state ? 'nav-item--active' : ''}`;
@@ -42,6 +43,7 @@ export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavI
       id={id}
       className={cls}
       onClick={onClick}
+      onKeyDown={onKeyDown}
       aria-haspopup="dialog"
       aria-expanded={expanded ?? false}
       aria-current={state ? 'page' : undefined}

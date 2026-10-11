@@ -1,4 +1,5 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, type CSSProperties, type ReactNode } from 'react';
+import { usePresence } from '../motion';
 import type { LibraryEvent } from '../data';
 import { EventRow } from '../components/EventRow';
 import { PreviewEmpty } from '../components/PreviewEmpty';
@@ -72,11 +73,27 @@ export function Row({ event: e, showTag, selected = false, href, onSelect, notif
   );
 }
 
-export function RowList({ events, ...opts }: { events: LibraryEvent[]; selectedId?: string | null; onSelectId?: (id: string) => void; hrefFor?: (e: LibraryEvent) => string } & Omit<RowOptions, 'selected' | 'href' | 'onSelect'>) {
+/** Ids rendered in the previous commit; only rows that were not there before animate in. */
+function useEnteringIds(ids: string[]) {
+  const sig = ids.join('|');
+  const prev = useRef<Set<string> | null>(null);
+  const entering = useMemo(() => ids.filter((id) => !prev.current || !prev.current.has(id)), [sig]);
+  useEffect(() => {
+    prev.current = new Set(ids);
+  }, [sig]);
+  return entering;
+}
+
+export function RowList({ events, staggerOffset = 0, ...opts }: { events: LibraryEvent[]; staggerOffset?: number; selectedId?: string | null; onSelectId?: (id: string) => void; hrefFor?: (e: LibraryEvent) => string } & Omit<RowOptions, 'selected' | 'href' | 'onSelect'>) {
+  const entering = useEnteringIds(events.map((e) => e.id));
   return (
     <ul className="list">
       {events.map((e) => (
-        <li key={e.id}>
+        <li
+          key={e.id}
+          className={entering.includes(e.id) ? 'is-entering' : undefined}
+          style={entering.includes(e.id) ? ({ '--i': staggerOffset + entering.indexOf(e.id) } as CSSProperties) : undefined}
+        >
           <Row
             event={e}
             showTag={opts.showTag}
@@ -144,6 +161,8 @@ export function SplitView({
   notify: Notify;
 }) {
   const previewRef = useRef<HTMLElement>(null);
+  // Keep the last event mounted while the panel animates out.
+  const { item: shown, exiting } = usePresence(selected ?? null, '--duration-fast');
   const lastSelected = useRef<string | null>(null);
 
   const close = () => {
@@ -180,19 +199,20 @@ export function SplitView({
   return (
     <div className="content-row">
       <div className="list-column">{list}</div>
-      {selected ? (
+      {shown ? (
         <PreviewEvent
           ref={previewRef}
-          key={selected.id}
           id={PREVIEW_ID}
-          title={selected.title}
-          subtitle={previewSubtitle(selected)}
-          details={previewDetails(selected)}
-          notes={selected.notes}
-          showSecondary={isPast(selected)}
+          contentKey={shown.id}
+          exiting={exiting}
+          title={shown.title}
+          subtitle={previewSubtitle(shown)}
+          details={previewDetails(shown)}
+          notes={shown.notes}
+          showSecondary={isPast(shown)}
           onClose={close}
-          onPrimary={() => notify(actionMessage(isPast(selected) ? 'Reuse this event' : 'Open full event', selected))}
-          onSecondary={() => notify(actionMessage('Open full event', selected))}
+          onPrimary={() => notify(actionMessage(isPast(shown) ? 'Reuse this event' : 'Open full event', shown))}
+          onSecondary={() => notify(actionMessage('Open full event', shown))}
         />
       ) : (
         <PreviewEmpty />
@@ -213,10 +233,10 @@ export function GroupedList({
 }) {
   return (
     <>
-      {groups.map((g) => (
+      {groups.map((g, gi) => (
         <section className="group" key={g.key} aria-labelledby={`group-${g.key}`}>
           <SectionLabel label={g.label} as="h2" id={`group-${g.key}`} />
-          <RowList events={g.events} {...opts} />
+          <RowList events={g.events} staggerOffset={groups.slice(0, gi).reduce((n, x) => n + x.events.length, 0)} {...opts} />
         </section>
       ))}
     </>

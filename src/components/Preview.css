@@ -47,3 +47,10 @@
 .preview__notes-text { margin: 0; color: var(--color-text-secondary); }
 .preview__spacer { flex: 1 1 0; }
 .preview__actions { display: flex; flex-direction: column; gap: var(--space-8); }
+
+/* Motion: the panel slides in a few px from the right; switching events crossfades its content only */
+.preview--event { animation: le-slide-in-right var(--duration-slow) var(--ease-out); }
+.preview--exiting { animation: le-slide-out-right var(--duration-fast) var(--ease-in) forwards; pointer-events: none; }
+.preview__item { animation: le-fade-in var(--duration-base) var(--ease-standard); }
+.preview--empty { animation: le-fade-in var(--duration-base) var(--ease-out); }
+.preview__close { transition: color var(--duration-fast) var(--ease-standard); }

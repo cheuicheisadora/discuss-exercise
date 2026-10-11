@@ -32,3 +32,23 @@
 .tab--selected .tab__count { background: var(--color-brand-primary-soft); color: var(--color-brand-primary); }
 .tab--selected .tab__indicator { background: var(--color-brand-primary); }
 .tab--default:hover { color: var(--color-text-primary); }
+
+/* Motion */
+.tab { transition: color var(--duration-fast) var(--ease-standard); }
+.tab__count { transition: background-color var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard); }
+/* While switching, one shared bar slides between tabs (see BranchView); the per-tab bars hide for that moment only. */
+.tabs--sliding .tab__indicator { visibility: hidden; }
+.tabs__indicator { opacity: 0; }
+.tabs--sliding .tabs__indicator { opacity: 1; }
+.tabs__indicator {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: var(--border-width-indicator);
+  border-radius: var(--border-width-indicator) var(--border-width-indicator) 0 0;
+  background: var(--color-brand-primary);
+  transform-origin: left center;
+  pointer-events: none;
+}
+.tabs__indicator--animated { transition: transform var(--duration-base) var(--ease-standard); }
+

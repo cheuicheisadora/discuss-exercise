@@ -32,3 +32,24 @@
   cursor: pointer;
 }
 .branch-menu__more:hover { text-decoration: underline; }
+
+/* Motion: enters from its trigger (fade + small scale + 4px slide down), leaves faster than it enters */
+.branch-menu {
+  transform-origin: var(--space-12) 0;
+  animation: le-menu-in var(--duration-base) var(--ease-out);
+}
+.branch-menu--exiting {
+  animation: le-menu-out var(--duration-fast) var(--ease-in) forwards;
+  pointer-events: none;
+}
+/* Invisible hover bridge over the 4px gap between trigger and menu (WCAG 1.4.13: the menu is hoverable) */
+.branch-menu__bridge {
+  position: absolute;
+  top: 100%;
+  left: calc(-1 * var(--space-12));
+  z-index: 30;
+  width: var(--size-menu);
+  height: calc(var(--space-4) + var(--border-width-1));
+}
+.branch-menu__more { transition: background-color var(--duration-fast) var(--ease-standard); }
+.branch-menu__more:hover { background: var(--color-brand-primary-soft); }

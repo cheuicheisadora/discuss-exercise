@@ -16,3 +16,6 @@
   outline-offset: calc(-1 * var(--size-focus-ring));
 }
 .branch-item[aria-selected='true'] .branch-item__name { color: var(--color-brand-primary); }
+
+/* Motion */
+.branch-item { transition: background-color var(--duration-fast) var(--ease-standard); }

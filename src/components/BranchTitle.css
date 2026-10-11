@@ -17,3 +17,13 @@
 .branch-title[aria-expanded='true'] { color: var(--color-brand-primary); }
 .branch-title:hover .branch-title__name,
 .branch-title:focus-visible .branch-title__name { text-decoration: underline; }
+
+/* Motion */
+.branch-title {
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+.branch-title__chevron { transition: transform var(--duration-base) var(--ease-standard); }
+.branch-title[aria-expanded='true'] .branch-title__chevron { transform: rotate(180deg); }
+.branch-title:active { transform: scale(var(--motion-press)); }

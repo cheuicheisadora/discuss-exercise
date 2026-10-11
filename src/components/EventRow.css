@@ -55,3 +55,14 @@
     pointer-events: auto;
   }
 }
+
+/* Motion: soft hover (border + light shadow, no lift), clear press, selected border fades in */
+.event-row__main {
+  transition:
+    border-color var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+.event-row__main:hover { box-shadow: var(--shadow-panel); }
+.event-row { transition: transform var(--duration-fast) var(--ease-standard); }
+/* Press the whole card (row + status column together); the action button keeps its own press. */
+.event-row:has(> .event-row__main:active) { transform: scale(var(--motion-press-row)); }

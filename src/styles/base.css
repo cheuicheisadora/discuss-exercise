@@ -93,7 +93,7 @@ a { color: var(--color-brand-primary); }
 
 /* ---------- Branch / list layout ---------- */
 
-.tabs { display: flex; gap: var(--space-24); border-bottom: var(--border-width-1) solid var(--color-border-default); flex-shrink: 0; }
+.tabs { position: relative; display: flex; gap: var(--space-24); border-bottom: var(--border-width-1) solid var(--color-border-default); flex-shrink: 0; }
 .tabpanel { display: flex; flex-direction: column; gap: var(--space-24); flex: 1 1 0; min-height: 0; }
 
 .filters { display: flex; align-items: center; justify-content: space-between; gap: var(--space-16); flex-wrap: wrap; flex-shrink: 0; }
@@ -151,10 +151,52 @@ a { color: var(--color-brand-primary); }
   .page { padding: var(--space-24) var(--space-16); }
 }
 
+/* =====================================================================
+   Motion. Subtle, fast, calm. Only opacity and transform are animated
+   (plus colors / box-shadow for small hover states). All timings and
+   distances are tokens; under prefers-reduced-motion the distance, scale
+   and stagger tokens become 0 / 1 / 0, so only short fades remain.
+   ===================================================================== */
+
+@keyframes le-fade-in { from { opacity: 0; } }
+@keyframes le-fade-out { to { opacity: 0; } }
+@keyframes le-rise-in { from { opacity: 0; transform: translateY(var(--motion-shift-sm)); } }
+@keyframes le-slide-in-right { from { opacity: 0; transform: translateX(var(--motion-shift-md)); } }
+@keyframes le-slide-out-right { to { opacity: 0; transform: translateX(var(--motion-shift-md)); } }
+@keyframes le-menu-in { from { opacity: 0; transform: translateY(calc(-1 * var(--motion-shift-sm))) scale(var(--motion-scale-from)); } }
+@keyframes le-menu-out { to { opacity: 0; transform: translateY(calc(-1 * var(--motion-shift-sm))) scale(var(--motion-scale-from)); } }
+@keyframes le-toast-in { from { opacity: 0; transform: translateY(var(--motion-shift-md)); } }
+@keyframes le-focus-in { from { outline-offset: 0; } }
+
+/* Page / view changes: the new view fades in (the old one leaves at once, so nothing waits). */
+.page { animation: le-fade-in var(--duration-base) var(--ease-out); }
+/* Tab switch: the panel content fades in. */
+.tabpanel { animation: le-fade-in var(--duration-base) var(--ease-out); }
+/* Empty states fade in gently. */
+.empty-state { animation: le-fade-in var(--duration-slow) var(--ease-out); }
+
+/* Lists: rows that newly appear rise in with a small stagger (max 6 staggered, the rest together).
+   `backwards` keeps them invisible only during their own short delay; they are clickable at once. */
+.list > li.is-entering {
+  animation: le-rise-in var(--duration-base) var(--ease-out) backwards;
+  animation-delay: calc(min(var(--i, 0), var(--motion-stagger-max)) * var(--motion-stagger));
+}
+
+/* Focus ring: visible on the first frame; only its offset settles outward. Never delayed. */
+a:focus-visible,
+button:focus-visible,
+.search-field:focus-within,
+.select:focus-within {
+  animation: le-focus-in var(--duration-fast) var(--ease-out);
+}
+
+/* Text links */
+.text-link { transition: color var(--duration-fast) var(--ease-standard); }
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
+  /* the focus ring offset movement is motion too */
+  a:focus-visible,
+  button:focus-visible,
+  .search-field:focus-within,
+  .select:focus-within { animation: none; }
 }

@@ -30,3 +30,7 @@
 .classic__arrow { font-size: var(--font-size-14); }
 .classic__title { color: var(--color-brand-primary); text-decoration: none; border-radius: var(--radius-sm); }
 .classic__title:hover { text-decoration: underline; }
+
+/* Motion */
+.classic__table tbody tr { transition: background-color var(--duration-fast) var(--ease-standard); }
+.classic__sort, .classic__title { transition: color var(--duration-fast) var(--ease-standard); }

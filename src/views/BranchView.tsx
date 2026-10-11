@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import { TITLE_MENU_TRIGGER } from '../useBranchMenu';
+import { tokenMs } from '../motion';
 import { EVENT_TYPES, type LibraryEvent } from '../data';
 import { BranchTitle } from '../components/BranchTitle';
 import { SearchField } from '../components/SearchField';
@@ -21,20 +23,19 @@ import {
 } from '../selectors';
 import { EmptyState, GroupedList, RowList, SplitView, noMatchText, type Notify } from './shared';
 
-export const TITLE_MENU_TRIGGER = 'branch-title-trigger';
 
 interface Props {
   scope: Scope;
   tab: TabName;
   eventId: string | null;
-  menuOpen: boolean;
-  onToggleMenu: () => void;
+  menuTrigger: { expanded: boolean; onClick: () => void; onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void };
+  menuHover: { onPointerEnter: (e: PointerEvent) => void; onPointerLeave: (e: PointerEvent) => void };
   menu?: ReactNode;
   announce: (msg: string) => void;
   notify: Notify;
 }
 
-export function BranchView({ scope, tab, eventId, menuOpen, onToggleMenu, menu, announce, notify }: Props) {
+export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, announce, notify }: Props) {
   const isAll = scope === 'all';
   const name = isAll ? 'All branches' : getBranch(scope)?.name ?? '';
   const upcoming = useMemo(() => upcomingIn(scope), [scope]);
@@ -74,6 +75,44 @@ export function BranchView({ scope, tab, eventId, menuOpen, onToggleMenu, menu, 
       switchTab(next, true);
     }
   };
+
+  /* ---------- Sliding tab indicator ----------
+     At rest each tab shows its own bar (pixel-identical to the approved design). When the tab
+     changes, a shared bar slides from the old tab to the new one with `transform` only (FLIP),
+     then hands back to the tab's own bar. Skipped under reduced motion. */
+  const indicatorRef = useRef<HTMLSpanElement>(null);
+  const prevTab = useRef<TabName>(tab);
+  useLayoutEffect(() => {
+    const el = tabRefs[tab].current;
+    const ind = indicatorRef.current;
+    const list = ind?.parentElement;
+    if (!el || !ind || !list) return;
+    const from = tabRefs[prevTab.current].current;
+    const changed = prevTab.current !== tab;
+    prevTab.current = tab;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!changed || !from || reduce) return;
+    const x = el.offsetLeft;
+    const w = el.offsetWidth;
+    const prev = { x: from.offsetLeft, w: from.offsetWidth };
+
+    ind.style.width = `${w}px`;
+    ind.classList.remove('tabs__indicator--animated');
+    ind.style.transform = `translateX(${prev.x}px) scaleX(${prev.w / w})`;
+    list.classList.add('tabs--sliding');
+    ind.getBoundingClientRect(); // commit the start position
+    ind.classList.add('tabs__indicator--animated');
+    ind.style.transform = `translateX(${x}px)`;
+
+    const done = () => list.classList.remove('tabs--sliding');
+    const timer = window.setTimeout(done, tokenMs('--duration-base') + 50);
+    ind.addEventListener('transitionend', done, { once: true });
+    return () => {
+      window.clearTimeout(timer);
+      ind.removeEventListener('transitionend', done);
+      done();
+    };
+  }, [tab]);
 
   /* ---------- Announce result counts / empty states on change ---------- */
   const firstRender = useRef(true);
@@ -125,8 +164,14 @@ export function BranchView({ scope, tab, eventId, menuOpen, onToggleMenu, menu, 
     <div className="page page--split">
       <div className="branch-header">
         <h1 className="page-title" id="page-title" tabIndex={-1}>
-          <span className="menu-anchor">
-            <BranchTitle id={TITLE_MENU_TRIGGER} branchName={name} expanded={menuOpen} onClick={onToggleMenu} />
+          <span className="menu-anchor" {...menuHover}>
+            <BranchTitle
+              id={TITLE_MENU_TRIGGER}
+              branchName={name}
+              expanded={menuTrigger.expanded}
+              onClick={menuTrigger.onClick}
+              onKeyDown={menuTrigger.onKeyDown}
+            />
             {menu}
           </span>
         </h1>
@@ -159,9 +204,10 @@ export function BranchView({ scope, tab, eventId, menuOpen, onToggleMenu, menu, 
           onSelect={() => switchTab('past')}
           onKeyDown={onTabKey}
         />
+        <span ref={indicatorRef} className="tabs__indicator" aria-hidden="true" />
       </div>
 
-      <div className="tabpanel" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
+      <div key={tab} className="tabpanel" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
         <Filters tab={tab} filters={f} past={past} onChange={setFilter} />
         <SplitView list={list} selected={selected} onSelect={(id) => go(tab, id)} notify={notify} />
       </div>
