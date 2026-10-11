@@ -13,26 +13,21 @@ export function tokenMs(name: string): number {
  * `exiting` is true while the element animates out; then `item` becomes null.
  */
 export function usePresence<T>(value: T | null, exitToken = '--duration-fast') {
-  const [item, setItem] = useState<T | null>(value);
-  const [exiting, setExiting] = useState(false);
+  // One state object updated functionally, so a fast open → close can never leave a stale item mounted.
+  const [state, setState] = useState<{ item: T | null }>({ item: value });
   const timer = useRef<number>();
 
   useEffect(() => {
     window.clearTimeout(timer.current);
     if (value !== null) {
-      setItem(value);
-      setExiting(false);
-    } else if (item !== null) {
-      setExiting(true);
-      timer.current = window.setTimeout(() => {
-        setItem(null);
-        setExiting(false);
-      }, tokenMs(exitToken));
+      setState({ item: value });
+    } else {
+      timer.current = window.setTimeout(() => setState({ item: null }), tokenMs(exitToken));
     }
     return () => window.clearTimeout(timer.current);
   }, [value]);
 
-  return { item: value ?? item, exiting: value === null && exiting };
+  return { item: value ?? state.item, exiting: value === null && state.item !== null };
 }
 
 /** True when the device has a real hover-capable pointer (mouse / trackpad). */

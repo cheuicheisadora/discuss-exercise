@@ -46,7 +46,7 @@ export const PreviewEvent = forwardRef<HTMLElement, PreviewEventProps>(function 
       <Fragment key={p.contentKey}>
       <div className="preview__header preview__item">
         <div className="preview__heading">
-          <h2 id={headingId} className="t-heading preview__title">
+          <h2 id={headingId} className="t-heading preview__title" tabIndex={-1}>
             {p.title}
           </h2>
           <p className="t-body preview__subtitle">{p.subtitle}</p>

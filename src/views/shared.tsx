@@ -143,7 +143,6 @@ function previewDetails(e: LibraryEvent) {
   ];
 }
 
-const isOverlay = () => window.matchMedia('(max-width: 1099px)').matches;
 
 /**
  * List + preview panel. Owns Esc-to-close and focus return.
@@ -190,9 +189,14 @@ export function SplitView({
     return () => document.removeEventListener('keydown', onKey);
   });
 
-  // In overlay mode (below 1100px) move focus into the panel when it opens.
+  // When an event is selected (row click, Enter/Space, or arriving with ?event= in the URL),
+  // move focus to the panel heading so keyboard and screen reader users land on the details.
+  const focusedFor = useRef<string | null>(null);
   useEffect(() => {
-    if (selected && selected.id !== lastSelected.current && isOverlay()) previewRef.current?.focus();
+    if (selected && selected.id !== focusedFor.current) {
+      (document.getElementById(`${PREVIEW_ID}-title`) ?? previewRef.current)?.focus();
+    }
+    focusedFor.current = selected?.id ?? null;
     lastSelected.current = selected?.id ?? lastSelected.current;
   }, [selected]);
 

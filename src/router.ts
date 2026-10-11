@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 
 export type Tab = 'upcoming' | 'past';
+/** Where the user came from when they jumped to a branch page (shows a back link). */
+export type From = 'my-events' | 'my-past';
 
 export type Route =
   | { name: 'my-events' }
   | { name: 'my-past'; event: string | null }
-  | { name: 'branch'; slug: string; tab: Tab; event: string | null }
+  | { name: 'branch'; slug: string; tab: Tab; event: string | null; from?: From | null }
   | { name: 'search'; q: string }
   | { name: 'classic' };
 
@@ -22,6 +24,7 @@ export function parseHash(hash: string): Route {
       slug: decodeURIComponent(seg[1]),
       tab: params.get('tab') === 'past' ? 'past' : 'upcoming',
       event: params.get('event'),
+      from: params.get('from') === 'my-events' || params.get('from') === 'my-past' ? (params.get('from') as From) : null,
     };
   }
   if (seg[0] === 'search') return { name: 'search', q: params.get('q') ?? '' };
@@ -38,6 +41,7 @@ export function buildHash(r: Route): string {
     case 'branch': {
       const p = new URLSearchParams({ tab: r.tab });
       if (r.event) p.set('event', r.event);
+      if (r.from) p.set('from', r.from);
       return `#/branch/${r.slug}?${p.toString()}`;
     }
     case 'search':

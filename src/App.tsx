@@ -59,10 +59,10 @@ export function App() {
     closeMenu(false);
     document.getElementById('main')?.scrollTo(0, 0);
     requestAnimationFrame(() => {
-      const ev = route.name === 'branch' ? route.event : null;
+      const ev = route.name === 'branch' || route.name === 'my-past' ? route.event : null;
       const row = ev ? document.getElementById(rowId(ev)) : null;
       if (row) {
-        row.focus();
+        // An event is selected from the URL: the details panel takes focus (see SplitView); keep its row in view.
         row.scrollIntoView({ block: 'nearest' });
       } else {
         document.getElementById('page-title')?.focus();
@@ -98,6 +98,7 @@ export function App() {
   /* ---------- Views ---------- */
   let view: JSX.Element;
   let section: 'my-events' | 'branches' | 'classic' | null = null;
+  let title = 'My events';
   switch (route.name) {
     case 'my-events':
       section = 'my-events';
@@ -105,12 +106,14 @@ export function App() {
       break;
     case 'my-past':
       section = 'my-events';
+      title = 'My past events';
       view = <MyPastEvents eventId={route.event} announce={announce} notify={notify} />;
       break;
     case 'branch': {
       section = 'branches';
       const valid = route.slug === 'all' || !!getBranch(route.slug);
       if (!valid) {
+        title = 'Branch not found';
         view = (
           <div className="page">
             <h1 className="page-title t-display" id="page-title" tabIndex={-1}>
@@ -128,12 +131,14 @@ export function App() {
       // A deep link to a past event always opens the Past tab (and vice versa).
       const ev = getEvent(route.event);
       const tab = ev ? (isPast(ev) ? 'past' : 'upcoming') : route.tab;
+      title = `${route.slug === 'all' ? 'All branches' : getBranch(route.slug)?.name} · ${tab === 'past' ? 'Past' : 'Upcoming'}`;
       view = (
         <BranchView
           key={route.slug}
           scope={route.slug as Scope}
           tab={tab}
           eventId={ev && (route.slug === 'all' || ev.branch === route.slug) ? ev.id : null}
+          from={route.from}
           menuTrigger={menu.triggerProps('title')}
           menuHover={menu.hoverProps('title')}
           menu={menuEl('title')}
@@ -144,13 +149,20 @@ export function App() {
       break;
     }
     case 'search':
+      title = route.q.trim() ? `Search: ${route.q.trim()}` : 'Search';
       view = <SearchResults key={route.q} q={route.q} notify={notify} />;
       break;
     case 'classic':
       section = 'classic';
+      title = 'Classic list';
       view = <ClassicList announce={announce} notify={notify} />;
       break;
   }
+
+  /* A page title per screen, so screen reader users know where they are. */
+  useEffect(() => {
+    document.title = `${title} · Library Events`;
+  }, [title]);
 
   /* Announce search result counts when a search runs. */
   useEffect(() => {
