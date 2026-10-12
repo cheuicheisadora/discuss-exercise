@@ -71,3 +71,8 @@
 }
 .select-menu--exiting { animation: le-menu-out var(--duration-fast) var(--ease-in) forwards; pointer-events: none; }
 .select-menu__option { transition: background-color var(--duration-fast) var(--ease-standard); }
+
+/* Phones: keep the list on screen */
+@media (max-width: 699px) {
+  .select-menu { max-width: calc(100vw - 2 * var(--space-16)); }
+}

@@ -200,6 +200,23 @@ export function SplitView({
     lastSelected.current = selected?.id ?? lastSelected.current;
   }, [selected]);
 
+  // Phones: the panel is a full-screen sheet, so the page behind it is made inert while it is open
+  // (focus can't wander onto hidden content). Live regions stay active.
+  useEffect(() => {
+    if (!selected || exiting || !window.matchMedia('(max-width: 699px)').matches) return;
+    const made: Element[] = [];
+    let node: Element | null = previewRef.current;
+    while (node && node.parentElement && !node.classList.contains('app')) {
+      for (const sib of Array.from(node.parentElement.children)) {
+        if (sib === node || sib.hasAttribute('inert') || sib.matches('[aria-live], [role="status"], .skip-link')) continue;
+        sib.setAttribute('inert', '');
+        made.push(sib);
+      }
+      node = node.parentElement;
+    }
+    return () => made.forEach((el) => el.removeAttribute('inert'));
+  }, [selected?.id, exiting]);
+
   return (
     <div className="content-row">
       <div className="list-column">{list}</div>

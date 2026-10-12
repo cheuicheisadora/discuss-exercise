@@ -75,6 +75,10 @@
   --size-list-min: 320px;
   --size-toast-max: 560px;
   --size-focus-ring: 2px;
+  /* Mobile (≤ 699px) */
+  --size-topbar-row-mobile: 56px;  /* logo + actions row */
+  --size-nav-mobile: 48px;         /* My events / Branches row */
+  --size-cell-label: 72px;         /* label column in Classic list cards */
 
   /* ---------- Motion ---------- */
   /* Durations */

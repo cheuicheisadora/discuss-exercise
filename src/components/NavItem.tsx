@@ -1,4 +1,4 @@
-import { forwardRef, type KeyboardEvent } from 'react';
+import { forwardRef, type KeyboardEvent, type MouseEvent } from 'react';
 import { IconChevronDown } from '../icons';
 import './NavItem.css';
 
@@ -9,7 +9,7 @@ export interface NavItemProps {
   showChevron?: boolean;
   /** Link target. Without href the item is a button (used by "Branches ▾"). */
   href?: string;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
   expanded?: boolean;
   id?: string;

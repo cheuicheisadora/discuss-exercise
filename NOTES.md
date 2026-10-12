@@ -222,3 +222,38 @@ You asked that clicking an event in the Classic list should not jump to the bran
 - List clicks show the message (mouse and Enter) on My events, My past events and search, with axe clean on each. Branch pages and All branches still open the panel and move focus to its heading.
 - The 22 motion checks and 18 dropdown checks pass. axe reports 0 violations, and Lighthouse accessibility is 100.
 - Pixel comparison with production, before the follow-up: only the My events subtitle and the focus ring on the panel heading (when arriving with `?event=`) differed. After the follow-up, My past events also changed: its list is full width.
+
+## 14. Mobile (round 6)
+
+You asked for a polished phone layout with the same information and the same design assets. Breakpoint: **≤ 699px**. Tablets (700–1099px) keep the existing overlay layout, and desktop is unchanged: pixel-identical to production on 12 screens, except the fix in "Also fixed" below.
+
+**Audit before (at 390px):**
+- The top bar overflowed: the page was 481px wide, and the search field covered "Branches", so it couldn't be tapped.
+- Event-row status badges and action buttons hung outside the card.
+- The details panel was a 360px overlay with a sliver of list beside it.
+- The Branch menu was 400px wide, so it ran off screen.
+- The Classic list table needed sideways scrolling.
+
+**What I did:**
+- **Top bar, in two sticky rows:**
+  - Row 1: logo · search button · Classic list (icon) · avatar.
+  - Row 2: My events · Branches ▾, with the blue indicator.
+  - The search button opens a full-width search row (Esc or ✕ closes it); "/" still works.
+  - New size tokens: `--size-topbar-row-mobile` 56px, `--size-nav-mobile` 48px.
+- **Pages:** scroll as normal documents (no inner scroll boxes), with 16px side padding and full-width search fields. Title, search, tabs and filters stack.
+- **Event rows:** date tile and text on top; the status badge (and the action button, right-aligned) inside the card along the bottom. Same tile, badge, button and type styles.
+- **Details panel → full-screen sheet:** the same component, with its actions at the bottom (respecting the iPhone home-bar safe area). The page behind is made `inert` while it's open, so keyboard and screen-reader focus can't land on hidden content; live regions stay active. ✕ or Esc closes it and returns focus to the row.
+- **Branch menu:** full width minus 16px margins, hanging from the top bar (or the branch title), with internal scroll. **Tapping** it no longer focuses "Find a branch", so the phone keyboard doesn't cover the list. Mouse and keyboard behave as before.
+- **Filter dropdowns:** kept on screen.
+- **Classic list:** each event becomes a stacked card (title, then Date / Branch / Room / Status with labels). The sort buttons stay on top and are 40px tall for touch. Explicit table roles keep the table semantics for screen readers in the card layout.
+- **Toasts** respect the safe area. Added `viewport-fit=cover` to the viewport meta tag.
+
+**Also fixed (every screen size):** the "Find a branch" field showed a second, square focus ring inside the rounded one. Only the rounded ring remains.
+
+**Verified:**
+- No horizontal overflow and nothing off-screen at 320, 360, 375, 390, 414 and 430px, across 14 states (menus, sheet, search row and dropdown open).
+- Touch flows: the menu opens by tap, choosing a branch works, the row opens the sheet with focus on its heading and the page behind inert, the sheet closes with focus back on the row, "Book room" works inside the card, search works, a result tap shows the message, and Classic list sorting works.
+- axe: 0 violations, with the menu open, the sheet open and on the Classic list cards. Every tap target is at least 24×24px.
+- Lighthouse in mobile mode: accessibility 100, best practices 100, performance 92–93, CLS 0.
+- No overflow at tablet widths (700, 768, 834, 1024 and 1280px).
+- Desktop suites still pass: 22 motion checks, 18 dropdown checks and 17 list checks.

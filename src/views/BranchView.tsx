@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent, type ReactNode } from 'react';
 import { TITLE_MENU_TRIGGER } from '../useBranchMenu';
 import { tokenMs } from '../motion';
 import { EVENT_TYPES, type LibraryEvent } from '../data';
@@ -29,7 +29,7 @@ interface Props {
   scope: Scope;
   tab: TabName;
   eventId: string | null;
-  menuTrigger: { expanded: boolean; onClick: () => void; onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void };
+  menuTrigger: { expanded: boolean; onClick: (e?: MouseEvent) => void; onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void };
   menuHover: { onPointerEnter: (e: PointerEvent) => void; onPointerLeave: (e: PointerEvent) => void };
   menu?: ReactNode;
   announce: (msg: string) => void;

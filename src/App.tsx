@@ -43,8 +43,11 @@ export function App() {
       if (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName)) return;
       e.preventDefault();
       closeMenu(false);
-      searchRef.current?.focus();
-      searchRef.current?.select();
+      window.dispatchEvent(new Event('app:open-search')); // phones: reveal the search row first
+      requestAnimationFrame(() => {
+        searchRef.current?.focus();
+        searchRef.current?.select();
+      });
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -58,6 +61,7 @@ export function App() {
     prevKey.current = key;
     closeMenu(false);
     document.getElementById('main')?.scrollTo(0, 0);
+    window.scrollTo(0, 0); // phones: the page scrolls as a document
     requestAnimationFrame(() => {
       const ev = route.name === 'branch' ? route.event : null;
       const row = ev ? document.getElementById(rowId(ev)) : null;

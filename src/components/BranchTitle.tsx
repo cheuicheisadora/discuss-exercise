@@ -1,11 +1,11 @@
-import { forwardRef, type KeyboardEvent } from 'react';
+import { forwardRef, type KeyboardEvent, type MouseEvent } from 'react';
 import { IconChevronDown } from '../icons';
 import './BranchTitle.css';
 
 export interface BranchTitleProps {
   branchName: string;
   expanded: boolean;
-  onClick: () => void;
+  onClick: (e: MouseEvent) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
   id?: string;
 }

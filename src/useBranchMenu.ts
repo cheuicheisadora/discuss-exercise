@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
 import { canHover, tokenMs, usePresence } from './motion';
 
 export type MenuAnchor = 'nav' | 'title';
@@ -43,10 +43,11 @@ export function useBranchMenu() {
     if (returnFocus && s) document.getElementById(triggerId(s.anchor))?.focus();
   }, []);
 
-  const openPinned = (anchor: MenuAnchor) => {
+  /** focusFilter = false for touch taps: don't pop up the phone keyboard over the list. */
+  const openPinned = (anchor: MenuAnchor, focusFilter = true) => {
     clearTimers();
     focusCounter.current += 1;
-    setState({ anchor, mode: 'pinned', focusToken: focusCounter.current });
+    setState({ anchor, mode: 'pinned', focusToken: focusFilter ? focusCounter.current : 0 });
   };
 
   /** Focus entered the menu (e.g. the user clicked into the filter): it no longer closes on pointer leave. */
@@ -56,14 +57,15 @@ export function useBranchMenu() {
 
   const triggerProps = (anchor: MenuAnchor) => ({
     expanded: state?.anchor === anchor,
-    onClick: () => {
+    onClick: (e?: MouseEvent) => {
+      const touch = (e?.nativeEvent as globalThis.PointerEvent | undefined)?.pointerType === 'touch';
       const s = stateRef.current;
       if (s && s.anchor === anchor) {
         // A click on a hover-opened menu keeps it open and moves focus in; a second click closes it.
-        if (s.mode === 'hover') openPinned(anchor);
+        if (s.mode === 'hover') openPinned(anchor, !touch);
         else close(false);
       } else {
-        openPinned(anchor);
+        openPinned(anchor, !touch);
       }
     },
     onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => {

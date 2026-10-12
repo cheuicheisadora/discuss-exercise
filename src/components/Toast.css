@@ -1,7 +1,7 @@
 .toast-region {
   position: fixed;
   left: 50%;
-  bottom: var(--space-24);
+  bottom: calc(var(--space-24) + env(safe-area-inset-bottom));
   transform: translateX(-50%);
   z-index: 50;
   width: max-content;

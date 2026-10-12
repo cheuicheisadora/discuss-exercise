@@ -53,3 +53,19 @@
 }
 .branch-menu__more { transition: background-color var(--duration-fast) var(--ease-standard); }
 .branch-menu__more:hover { background: var(--color-brand-primary-soft); }
+
+/* Phones: full width minus the page margins, scrolls inside if needed */
+@media (max-width: 699px) {
+  .branch-menu {
+    left: 0;
+    width: calc(100vw - 2 * var(--space-16));
+    max-width: none;
+    max-height: calc(100vh - var(--size-topbar-row-mobile) - var(--size-nav-mobile) - var(--space-24));
+    max-height: calc(100dvh - var(--size-topbar-row-mobile) - var(--size-nav-mobile) - var(--space-24));
+    transform-origin: var(--space-24) 0;
+  }
+  .branch-menu__bridge { left: 0; width: calc(100vw - 2 * var(--space-16)); }
+  /* from the top bar: positioned against the (sticky) bar */
+  .branch-menu--nav { left: var(--space-16); }
+  .topbar .branch-menu__bridge { display: none; }
+}

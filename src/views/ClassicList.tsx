@@ -55,13 +55,14 @@ export function ClassicList({ announce, notify }: { announce: (m: string) => voi
         </div>
       </div>
       <div className="classic">
-        <table className="classic__table">
+        <table className="classic__table" role="table">
           <caption className="sr-only">All events, sorted by {COLS.find((c) => c.key === sort.col)?.label}</caption>
-          <thead>
-            <tr>
+          <thead role="rowgroup">
+            <tr role="row">
               {COLS.map((c) => (
                 <th
                   key={c.key}
+                  role="columnheader"
                   scope="col"
                   aria-sort={sort.col === c.key ? (sort.dir === 1 ? 'ascending' : 'descending') : 'none'}
                 >
@@ -75,13 +76,13 @@ export function ClassicList({ announce, notify }: { announce: (m: string) => voi
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody role="rowgroup">
             {rows.map((e) => {
               const s = statusOf(e);
               return (
-                <tr key={e.id}>
-                  <td className="t-body">{e.date ? longDate(e.date) : e.target ?? 'No date yet'}</td>
-                  <td>
+                <tr key={e.id} role="row">
+                  <td role="cell" data-label="Date" className="classic__date t-body">{e.date ? longDate(e.date) : e.target ?? 'No date yet'}</td>
+                  <td role="cell" data-label="Title" className="classic__title-cell">
                     <button
                       type="button"
                       className="classic__title t-button"
@@ -90,9 +91,9 @@ export function ClassicList({ announce, notify }: { announce: (m: string) => voi
                       {e.title}
                     </button>
                   </td>
-                  <td className="t-body">{branchName(e.branch)}</td>
-                  <td className="t-body">{e.room ?? '—'}</td>
-                  <td>
+                  <td role="cell" data-label="Branch" className="t-body">{branchName(e.branch)}</td>
+                  <td role="cell" data-label="Room" className="t-body">{e.room ?? '—'}</td>
+                  <td role="cell" data-label="Status">
                     <StatusBadge tone={s.tone} label={s.label} showIcon={s.showIcon} />
                   </td>
                 </tr>

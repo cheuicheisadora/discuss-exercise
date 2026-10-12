@@ -1,7 +1,7 @@
-import { forwardRef, useEffect, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import { forwardRef, useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent, type ReactNode } from 'react';
 import { TOPBAR_MENU_TRIGGER } from '../useBranchMenu';
 import { CURRENT_USER } from '../data';
-import { IconList } from '../icons';
+import { IconClose, IconList, IconSearch } from '../icons';
 import { Button } from './Button';
 import { NavItem } from './NavItem';
 import { Profile } from './Profile';
@@ -10,7 +10,7 @@ import './TopBar.css';
 
 export interface TopBarProps {
   section: 'my-events' | 'branches' | 'classic' | null;
-  menuTrigger: { expanded: boolean; onClick: () => void; onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void };
+  menuTrigger: { expanded: boolean; onClick: (e?: MouseEvent) => void; onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void };
   menuHover: { onPointerEnter: (e: PointerEvent) => void; onPointerLeave: (e: PointerEvent) => void };
   /** Branch menu, rendered under the "Branches" trigger when open from the top bar. */
   menu?: ReactNode;
@@ -25,6 +25,29 @@ export const TopBar = forwardRef<HTMLInputElement, TopBarProps>(function TopBar(
 ) {
   const [q, setQ] = useState(searchValue);
   useEffect(() => setQ(searchValue), [searchValue]);
+
+  // Phones: the global search sits behind a search button and opens as its own row.
+  // (On wider screens the field is always visible and this state has no effect.)
+  const [searchOpen, setSearchOpen] = useState(!!searchValue);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (searchValue) setSearchOpen(true);
+  }, [searchValue]);
+  // "/" opens the search row first (App dispatches this event before focusing the field).
+  useEffect(() => {
+    const open = () => setSearchOpen(true);
+    window.addEventListener('app:open-search', open);
+    return () => window.removeEventListener('app:open-search', open);
+  }, []);
+  const openSearch = () => {
+    setSearchOpen(true);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  };
+  const closeSearch = () => {
+    setSearchOpen(false);
+    toggleRef.current?.focus();
+  };
 
   return (
     <header className="topbar">
@@ -49,16 +72,38 @@ export const TopBar = forwardRef<HTMLInputElement, TopBarProps>(function TopBar(
         </nav>
       </div>
       <div className="topbar__right">
+        <button
+          ref={toggleRef}
+          type="button"
+          className="topbar__search-toggle"
+          aria-expanded={searchOpen}
+          aria-controls="topbar-search"
+          aria-label={searchOpen ? 'Close search' : 'Search all events'}
+          onClick={() => (searchOpen ? closeSearch() : openSearch())}
+        >
+          {searchOpen ? <IconClose /> : <IconSearch />}
+        </button>
         <form
           role="search"
-          className="topbar__search"
+          id="topbar-search"
+          className={`topbar__search ${searchOpen ? 'topbar__search--open' : ''}`}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape' && window.matchMedia('(max-width: 699px)').matches) {
+              e.preventDefault();
+              closeSearch();
+            }
+          }}
           onSubmit={(e) => {
             e.preventDefault();
             onSearch(q.trim());
           }}
         >
           <SearchField
-            ref={searchRef}
+            ref={(el) => {
+              inputRef.current = el;
+              if (typeof searchRef === 'function') searchRef(el);
+              else if (searchRef) searchRef.current = el;
+            }}
             variant="global"
             placeholder="Search all events"
             label="Search all events (press / to focus)"

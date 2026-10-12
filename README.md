@@ -54,6 +54,17 @@ Examples:
 | Out-of-scope action toast | **New event**, **Book room**, **Schedule**, **Open full event**, **Reuse this event** |
 | Preview as overlay | Make the window narrower than 1100px and select a row |
 
+## Mobile
+
+Below 700px the app switches to a phone layout with the same information and design tokens:
+- a two-row sticky top bar (the search opens from a button);
+- stacked event cards;
+- event details as a full-screen sheet;
+- a full-width Branch menu;
+- the Classic list as cards.
+
+See NOTES.md section 14.
+
 ## Keyboard
 
 - `/` focuses the global search (from anywhere except a text field). Enter shows the results.

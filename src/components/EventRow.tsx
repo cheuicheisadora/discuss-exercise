@@ -54,7 +54,7 @@ export function EventRow(p: EventRowProps) {
   );
 
   return (
-    <div className="event-row">
+    <div className={`event-row ${p.showAction && p.actionLabel ? 'event-row--action' : ''}`}>
       {p.href ? (
         <a id={p.id} className={cls} href={p.href}>
           {content}

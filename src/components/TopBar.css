@@ -29,5 +29,65 @@
 }
 @media (max-width: 799px) {
   .topbar__right .btn span { position: absolute; width: var(--border-width-1); height: var(--border-width-1); overflow: hidden; clip: rect(0 0 0 0); }
-  .topbar__right .profile { display: none; }
+}
+
+/* Search toggle: phones only */
+.topbar__search-toggle { display: none; }
+
+/* ---------- Phones (≤ 699px): two rows, sticky ----------
+   Row 1: logo · search button · Classic list · avatar
+   (search row, when open)
+   Row 2: My events · Branches ▾ */
+@media (max-width: 699px) {
+  .topbar {
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    grid-template-areas:
+      'logo toggle classic avatar'
+      'search search search search'
+      'nav nav nav nav';
+    align-items: center;
+    gap: 0 var(--space-8);
+    height: auto;
+    padding: 0 var(--space-16);
+  }
+  .topbar__left { display: contents; }
+  /* single line, vertically centred in the 56px row (keeps the space between "Library" and "Events") */
+  .topbar .topbar__logo { grid-area: logo; line-height: var(--size-topbar-row-mobile); }
+  .topbar__right { display: contents; }
+  .topbar__right > .btn { grid-area: classic; }
+  .topbar__right > .profile { grid-area: avatar; }
+  .topbar__search-toggle { grid-area: toggle; }
+  /* the Branch menu hangs from the whole bar (16px from each edge), not from the "Branches" word */
+  .topbar__nav .menu-anchor { position: static; }
+  .topbar__nav { grid-area: nav; height: var(--size-nav-mobile); gap: var(--space-24); }
+  .topbar__nav .nav-item { height: var(--size-nav-mobile); }
+  .topbar__nav .nav-item__content { padding-top: var(--space-12); }
+
+  /* the search field moves to its own full-width row and only shows when opened */
+  .topbar__search { grid-area: search; display: none; padding-bottom: var(--space-8); }
+  .topbar__search--open { display: flex; }
+  .topbar__search .search-field--global { width: 100%; }
+  .topbar__search .search-field__shortcut { display: none; }
+
+  .topbar__search-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--size-control-md);
+    height: var(--size-control-md);
+    padding: 0;
+    background: var(--color-bg-surface);
+    border: var(--border-width-1) solid var(--color-border-control);
+    border-radius: var(--radius-full);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-standard);
+  }
+  .topbar__search-toggle[aria-expanded='true'] { background: var(--color-bg-subtle); }
+  .topbar__search-toggle svg { width: var(--size-icon-md); height: var(--size-icon-md); }
+  .topbar__right .btn--neutral { width: var(--size-control-md); padding: 0; }
+  .topbar__right .profile { gap: 0; }
 }

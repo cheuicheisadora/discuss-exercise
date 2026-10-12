@@ -30,6 +30,7 @@
   /* the wrapper draws the focus ring for the whole pill */
   outline: none;
 }
+.search-field__input:focus-visible { outline: none; } /* the pill (wrapper) shows the ring; avoid a second square ring */
 .search-field__input::placeholder { color: var(--color-text-muted); opacity: 1; }
 .search-field__input::-webkit-search-cancel-button { cursor: pointer; }
 .search-field__shortcut {
