@@ -51,7 +51,7 @@ export const PreviewEvent = forwardRef<HTMLElement, PreviewEventProps>(function 
           </h2>
           <p className="t-body preview__subtitle">{p.subtitle}</p>
         </div>
-        <button type="button" className="preview__close" aria-label="Close preview" onClick={p.onClose}>
+        <button type="button" className="preview__close" aria-label="Close preview" aria-keyshortcuts="Escape" onClick={p.onClose}>
           <IconClose />
         </button>
       </div>

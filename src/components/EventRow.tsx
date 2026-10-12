@@ -3,6 +3,7 @@ import { DateTile } from './DateTile';
 import { Button } from './Button';
 import { StatusBadge, type StatusBadgeProps } from './StatusBadge';
 import { Tag } from './Tag';
+import { moveInList } from '../keyboard';
 import './EventRow.css';
 
 export interface EventRowProps {
@@ -65,6 +66,7 @@ export function EventRow(p: EventRowProps) {
           type="button"
           className={cls}
           onClick={p.onSelect}
+          onKeyDown={(e) => moveInList(e, '.event-row__main')}
           aria-expanded={p.previewId ? p.selected : undefined}
           aria-controls={p.selected ? p.previewId : undefined}
         >

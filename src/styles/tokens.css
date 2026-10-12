@@ -28,6 +28,7 @@
   --color-status-warning-fg: #9a5b08;
   --color-status-danger-bg: #fde3e1;
   --color-status-danger-fg: #c32e1f;
+  --color-scrim: rgba(32, 34, 36, 0.4); /* behind modal dialogs (text-primary at 40%) */
 
   /* ---------- Spacing (Figma: space/...) ---------- */
   --space-0: 0;

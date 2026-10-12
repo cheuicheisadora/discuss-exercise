@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BranchMenu } from './components/BranchMenu';
 import { Toast } from './components/Toast';
+import { KeyboardHelp } from './components/KeyboardHelp';
 import { TopBar } from './components/TopBar';
 import { navigate, pageKey, useRoute } from './router';
 import { getBranch, getEvent, isPast, type Scope } from './selectors';
@@ -35,12 +36,40 @@ export function App() {
     toastTimer.current = window.setTimeout(() => setToast(null), 6000);
   }, []);
 
-  /* ---------- "/" focuses the global search ---------- */
+  /* ---------- Keyboard shortcuts help ("?") ---------- */
+  const helpRef = useRef<HTMLDialogElement>(null);
+  const helpReturn = useRef<HTMLElement | null>(null);
+  const openHelp = useCallback(() => {
+    const d = helpRef.current;
+    if (!d || d.open) return;
+    helpReturn.current = document.activeElement as HTMLElement;
+    closeMenu(false);
+    d.showModal();
+  }, [closeMenu]);
+
+  /* ---------- Esc dismisses a visible message (if nothing else used Esc) ---------- */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key !== 'Escape' || e.defaultPrevented || !toast || helpRef.current?.open) return;
+      window.clearTimeout(toastTimer.current);
+      setToast(null);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [toast]);
+
+  /* ---------- "/" focuses the global search, "?" shows the shortcuts ---------- */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || helpRef.current?.open) return;
       const t = e.target as HTMLElement;
       if (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName)) return;
+      if (e.key === '?') {
+        e.preventDefault();
+        openHelp();
+        return;
+      }
+      if (e.key !== '/') return;
       e.preventDefault();
       closeMenu(false);
       window.dispatchEvent(new Event('app:open-search')); // phones: reveal the search row first
@@ -182,6 +211,10 @@ export function App() {
       }}>
         Skip to content
       </a>
+      <button type="button" className="skip-link skip-link--second" onClick={openHelp}>
+        Keyboard shortcuts
+      </button>
+      <KeyboardHelp ref={helpRef} onClose={() => helpReturn.current?.focus()} />
       <TopBar
         ref={searchRef}
         section={section === 'classic' ? null : section}

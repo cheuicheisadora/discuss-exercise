@@ -3,6 +3,7 @@ import { EVENTS, type LibraryEvent } from '../data';
 import { StatusBadge } from '../components/StatusBadge';
 import { branchName, byDateAsc, longDate, statusOf } from '../selectors';
 import { actionMessage, type Notify } from './shared';
+import { moveInList } from '../keyboard';
 import './ClassicList.css';
 
 type Col = 'date' | 'title' | 'branch' | 'room' | 'status';
@@ -87,6 +88,7 @@ export function ClassicList({ announce, notify }: { announce: (m: string) => voi
                       type="button"
                       className="classic__title t-button"
                       onClick={() => notify(actionMessage('Open full event', e))}
+                      onKeyDown={(ev) => moveInList(ev, '.classic__title')}
                     >
                       {e.title}
                     </button>

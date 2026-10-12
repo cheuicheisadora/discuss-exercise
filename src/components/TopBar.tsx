@@ -107,6 +107,7 @@ export const TopBar = forwardRef<HTMLInputElement, TopBarProps>(function TopBar(
             variant="global"
             placeholder="Search all events"
             label="Search all events (press / to focus)"
+            aria-keyshortcuts="/"
             showShortcut
             value={q}
             onChange={(e) => setQ(e.target.value)}

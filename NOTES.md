@@ -287,3 +287,21 @@ You asked that the "All" tab should let you see all past events too.
 - **Subtitle:** now "Your branches: West Ashley and Summerville", the same as My events.
 - **Unchanged:** the Year / Type filters and the row message.
 - **Verified:** links, tabs (click and arrow keys), filters, axe (0 violations) and phone at 360px (no overflow, tabs fit).
+
+## 17. Desktop keyboard pass (round 9)
+
+You said the site didn't feel ready for keyboard users on desktop. I first ran a Tab-by-Tab audit of every page at 1440px. Every stop had a visible focus ring and scrolled into view, so the basics were fine. The real problems were efficiency and discoverability:
+- **Long lists cost one Tab per row** (Main Library: 14 events, two Tab stops for rows with an action button). **Fix:** ↑/↓ move between events across groups, Home/End jump to the first/last, Enter opens. Tab still works as before. This is the pattern Gmail, Linear and GitHub use. Same on the Classic list titles. (`src/keyboard.ts`)
+- **The shortcuts were invisible.** "/", the arrow keys and Esc were only in the README. **Fix:** "?" opens a **Keyboard shortcuts** dialog (native `<dialog>` with `showModal`, so focus is trapped and Esc closes it; focus returns to where you were). A "Keyboard shortcuts" link is the second Tab stop, right after "Skip to content", and is hidden until focused, in the same spot. The keycaps reuse the style of the search "/" hint. I added one token, `--color-scrim`, for the dialog backdrop.
+- **Messages could not be dismissed from the keyboard.** **Fix:** Esc dismisses the toast, but only if nothing else used that Esc (an open menu, dropdown or details panel closes first).
+- **`aria-keyshortcuts`** on the search field ("/") and the close buttons ("Escape"), so screen readers announce them.
+- **Guards:** "/" and "?" are ignored while typing in a field and while the dialog is open.
+- **Verified:**
+  - a new scripted test (22 checks: skip links, arrows across groups, Home/End, scroll into view, Enter/Esc focus return, Classic list, toast Esc, dialog focus trap and return; all pass);
+  - the Tab audit again;
+  - the earlier list, dropdown, motion, mobile, scope and past-events suites;
+  - axe: 0 violations, including with the dialog open;
+  - Lighthouse: accessibility 100, best practices 100 on 4 routes;
+  - pixel comparison with production: identical, apart from 1–2px anti-aliasing noise.
+- **Honest note:** one old check in my list suite still fails ("My events subtitle"). It expects the subtitle text from before round 8, and it fails on production too, so it's an outdated test, not a regression.
+- **Not done:** single-letter shortcuts (like "j/k" or "g then b"). They can clash with screen readers and voice control (WCAG 2.1.4), and the arrow keys already cover the need.
