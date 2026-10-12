@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BranchMenu } from './components/BranchMenu';
 import { Toast } from './components/Toast';
+import { listArrowsFromAnywhere } from './keyboard';
 import { KeyboardHelp } from './components/KeyboardHelp';
 import { TopBar } from './components/TopBar';
 import { navigate, pageKey, useRoute } from './router';
@@ -57,6 +58,12 @@ export function App() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [toast]);
+
+  /* ---------- ↑/↓ reach the event list even when focus is elsewhere ---------- */
+  useEffect(() => {
+    document.addEventListener('keydown', listArrowsFromAnywhere);
+    return () => document.removeEventListener('keydown', listArrowsFromAnywhere);
+  }, []);
 
   /* ---------- "/" focuses the global search, "?" shows the shortcuts ---------- */
   useEffect(() => {
