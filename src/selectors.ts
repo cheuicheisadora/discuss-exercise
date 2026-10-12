@@ -180,8 +180,8 @@ export function myAttention(scope: MyScope = 'mine') {
 export function myUpcoming(scope: MyScope = 'mine') {
   return EVENTS.filter((e) => inScope(e, scope) && isUpcoming(e) && !e.blocker).sort(byDateAsc);
 }
-export function myPast() {
-  return EVENTS.filter((e) => isMine(e) && isPast(e)).sort(byDateDesc);
+export function myPast(scope: MyScope = 'mine') {
+  return EVENTS.filter((e) => inScope(e, scope) && isPast(e)).sort(byDateDesc);
 }
 
 /* ---------------- Filtering & search ---------------- */

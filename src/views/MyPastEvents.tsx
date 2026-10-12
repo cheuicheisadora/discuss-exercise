@@ -1,13 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { DEFAULT_FILTERS, applyFilters, myPast, plural, type Filters as F } from '../selectors';
+import { navigate } from '../router';
+import { DEFAULT_FILTERS, applyFilters, myPast, plural, type Filters as F, type MyScope } from '../selectors';
 import { Filters } from './BranchView';
 import { myBranchesText } from './MyEvents';
+import { ScopeTabs } from './ScopeTabs';
 import { EmptyState, RowList, actionMessage, type Notify } from './shared';
 
-export function MyPastEvents({ announce, notify }: { announce: (m: string) => void; notify: Notify }) {
-  const past = myPast();
+export function MyPastEvents({ scope, announce, notify }: { scope: MyScope; announce: (m: string) => void; notify: Notify }) {
+  const past = myPast(scope);
   const [filters, setFilters] = useState<F>(DEFAULT_FILTERS);
   const visible = applyFilters(past, filters);
+  const select = (s: MyScope) => {
+    if (s !== scope) navigate({ name: 'my-past', view: s }, { replace: true });
+  };
 
   const first = useRef(true);
   useEffect(() => {
@@ -16,7 +21,7 @@ export function MyPastEvents({ announce, notify }: { announce: (m: string) => vo
       return;
     }
     announce(visible.length ? `${visible.length} past ${plural(visible.length, 'event', 'events')}` : 'No events match these filters.');
-  }, [filters.type, filters.year]);
+  }, [filters.type, filters.year, scope]);
 
   return (
     <div className="page">
@@ -25,10 +30,11 @@ export function MyPastEvents({ announce, notify }: { announce: (m: string) => vo
           <h1 className="page-title t-display" id="page-title" tabIndex={-1}>
             My past events
           </h1>
-          <p className="page-subtitle t-body">Completed events you coordinated at {myBranchesText()}</p>
+          <p className="page-subtitle t-body">Your branches: {myBranchesText()}</p>
         </div>
       </div>
-      <div className="tabpanel">
+      <ScopeTabs scope={scope} counts={{ mine: myPast('mine').length, branches: myPast('branches').length }} onSelect={select} idPrefix="past" />
+      <div key={scope} className="tabpanel" role="tabpanel" id={`past-panel-${scope}`} aria-labelledby={`past-tab-${scope}`}>
         <Filters tab="past" filters={filters} past={past} onChange={(p) => setFilters((f) => ({ ...f, ...p }))} />
         {visible.length ? (
           <section aria-label="Past events">

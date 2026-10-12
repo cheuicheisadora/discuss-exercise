@@ -276,3 +276,14 @@ You pointed out that the explanatory sentence ("Only events you coordinate at �
 - Keyboard, refresh and axe (0 violations).
 - The list, motion, dropdown and phone suites still pass.
 - Other screens are pixel-identical to production.
+
+## 16. "All" also covers past events (round 8)
+
+You asked that the "All" tab should let you see all past events too.
+- **The past-events link follows the tab:**
+  - "Coordinated by me" → "See my past events" (`#/my-events/past`), as before.
+  - "All" → "See all past events" (`#/my-events/past?view=branches`).
+- **My past events has the same tabs:** "Coordinated by me (5)" and "All (7)". "All" adds Chess club and both book clubs from other coordinators. The tabs are a shared `ScopeTabs` component, used by both pages.
+- **Subtitle:** now "Your branches: West Ashley and Summerville", the same as My events.
+- **Unchanged:** the Year / Type filters and the row message.
+- **Verified:** links, tabs (click and arrow keys), filters, axe (0 violations) and phone at 360px (no overflow, tabs fit).

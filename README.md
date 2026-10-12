@@ -24,7 +24,7 @@ Routing uses the URL hash, so deep links work on any static host (Vercel include
 | Route | View |
 |---|---|
 | `#/my-events` (default) | My events (screen 01). Tabs: "Coordinated by me" (default) and "All" (`?view=branches`, everything at your branches) |
-| `#/my-events/past` | My past events: Ana's completed events from both branches |
+| `#/my-events/past` | My past events. Tabs: "Coordinated by me" (default) and "All" (`?view=branches`, every past event at your branches) |
 | `#/branch/:slug?tab=upcoming\|past&event=:id` | Branch view (screens 03–05). `:slug` is e.g. `west-ashley` |
 | `#/branch/all` | All branches (system-wide view, Tag visible) |
 | `#/search?q=...` | Global search results, grouped Upcoming / Past |

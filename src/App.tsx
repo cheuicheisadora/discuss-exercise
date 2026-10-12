@@ -111,7 +111,7 @@ export function App() {
     case 'my-past':
       section = 'my-events';
       title = 'My past events';
-      view = <MyPastEvents announce={announce} notify={notify} />;
+      view = <MyPastEvents scope={route.view ?? 'mine'} announce={announce} notify={notify} />;
       break;
     case 'branch': {
       section = 'branches';

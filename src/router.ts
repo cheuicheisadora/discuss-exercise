@@ -4,7 +4,7 @@ export type Tab = 'upcoming' | 'past';
 
 export type Route =
   | { name: 'my-events'; view?: 'mine' | 'branches' }
-  | { name: 'my-past'; event: string | null }
+  | { name: 'my-past'; view?: 'mine' | 'branches' }
   | { name: 'branch'; slug: string; tab: Tab; event: string | null }
   | { name: 'search'; q: string }
   | { name: 'classic' };
@@ -15,7 +15,7 @@ export function parseHash(hash: string): Route {
   const params = new URLSearchParams(query);
   const seg = path.split('/').filter(Boolean);
 
-  if (seg[0] === 'my-events' && seg[1] === 'past') return { name: 'my-past', event: params.get('event') };
+  if (seg[0] === 'my-events' && seg[1] === 'past') return { name: 'my-past', view: params.get('view') === 'branches' ? 'branches' : 'mine' };
   if (seg[0] === 'branch' && seg[1]) {
     return {
       name: 'branch',
@@ -34,7 +34,7 @@ export function buildHash(r: Route): string {
     case 'my-events':
       return r.view === 'branches' ? '#/my-events?view=branches' : '#/my-events';
     case 'my-past':
-      return r.event ? `#/my-events/past?event=${encodeURIComponent(r.event)}` : '#/my-events/past';
+      return r.view === 'branches' ? '#/my-events/past?view=branches' : '#/my-events/past';
     case 'branch': {
       const p = new URLSearchParams({ tab: r.tab });
       if (r.event) p.set('event', r.event);
