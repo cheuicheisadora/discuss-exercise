@@ -257,3 +257,22 @@ You asked for a polished phone layout with the same information and the same des
 - Lighthouse in mobile mode: accessibility 100, best practices 100, performance 92–93, CLS 0.
 - No overflow at tablet widths (700, 768, 834, 1024 and 1280px).
 - Desktop suites still pass: 22 motion checks, 18 dropdown checks and 17 list checks.
+
+## 15. My events scope, shown as tabs (round 7)
+
+You pointed out that the explanatory sentence ("Only events you coordinate at … To see everything at a branch, use Branches.") isn't how products present this. I checked how others do it:
+- **[Linear "My issues"](https://linear.app/docs/my-issues):** no explanatory text; the scope is a row of tabs ("Assigned", "Created", "Subscribed", "Activity").
+- **[GitHub's pull requests dashboard](https://github.blog/changelog/2026-07-09-new-pull-requests-dashboard-is-now-generally-available):** named default filters ("Authored by me", "Assigned to me", …).
+- **Filter UX guidance** (e.g. [SaaS UI](https://www.saasui.design/blog/saas-tags-labels-chips-ux-patterns)): keep the active scope visible as a control.
+
+**What changed (applying that pattern):**
+- **Subtitle:** now only the context, "Your branches: West Ashley and Summerville".
+- **Scope tabs** under the title, reusing the Tab component and tokens: **"Coordinated by me (5)"**, the default and the same 5 events as before, and **"All (7)"**, everything at Ana's branches including Marcus's Chess club and Jen's Book club. Its numbers now line up with the Branches menu, which was the source of confusion in the usability test.
+- **Tab behaviour:** standard ARIA tabs; ←/→/Home/End switch; the choice is kept in the URL (`#/my-events?view=branches`), so it survives refresh and Back. Row clicks still show the "full event page" message.
+- **Label choice:** the second tab was first "All at my branches", but on phones (320–414px) the two labels didn't fit side by side, and a half-hidden tab is worse. I shortened it to "All" everywhere, so the visible label always matches the screen-reader name. The subtitle right above names the branches.
+
+**Verified:**
+- Desktop and phone (no overflow; the tabs fit at 320–430px).
+- Keyboard, refresh and axe (0 violations).
+- The list, motion, dropdown and phone suites still pass.
+- Other screens are pixel-identical to production.

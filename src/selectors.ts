@@ -171,11 +171,14 @@ export function groupUpcoming(list: LibraryEvent[]) {
 export function isMine(e: LibraryEvent) {
   return e.coordinator === CURRENT_USER.name && CURRENT_USER.branches.includes(e.branch);
 }
-export function myAttention() {
-  return EVENTS.filter((e) => isMine(e) && needsAttention(e)).sort(byDateAsc);
+/** My events scope: events Ana coordinates, or everything at her branches. */
+export type MyScope = 'mine' | 'branches';
+const inScope = (e: LibraryEvent, scope: MyScope) => (scope === 'mine' ? isMine(e) : CURRENT_USER.branches.includes(e.branch));
+export function myAttention(scope: MyScope = 'mine') {
+  return EVENTS.filter((e) => inScope(e, scope) && needsAttention(e)).sort(byDateAsc);
 }
-export function myUpcoming() {
-  return EVENTS.filter((e) => isMine(e) && isUpcoming(e) && !e.blocker).sort(byDateAsc);
+export function myUpcoming(scope: MyScope = 'mine') {
+  return EVENTS.filter((e) => inScope(e, scope) && isUpcoming(e) && !e.blocker).sort(byDateAsc);
 }
 export function myPast() {
   return EVENTS.filter((e) => isMine(e) && isPast(e)).sort(byDateDesc);

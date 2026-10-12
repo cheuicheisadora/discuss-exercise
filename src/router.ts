@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 export type Tab = 'upcoming' | 'past';
 
 export type Route =
-  | { name: 'my-events' }
+  | { name: 'my-events'; view?: 'mine' | 'branches' }
   | { name: 'my-past'; event: string | null }
   | { name: 'branch'; slug: string; tab: Tab; event: string | null }
   | { name: 'search'; q: string }
@@ -26,13 +26,13 @@ export function parseHash(hash: string): Route {
   }
   if (seg[0] === 'search') return { name: 'search', q: params.get('q') ?? '' };
   if (seg[0] === 'classic') return { name: 'classic' };
-  return { name: 'my-events' };
+  return { name: 'my-events', view: params.get('view') === 'branches' ? 'branches' : 'mine' };
 }
 
 export function buildHash(r: Route): string {
   switch (r.name) {
     case 'my-events':
-      return '#/my-events';
+      return r.view === 'branches' ? '#/my-events?view=branches' : '#/my-events';
     case 'my-past':
       return r.event ? `#/my-events/past?event=${encodeURIComponent(r.event)}` : '#/my-events/past';
     case 'branch': {

@@ -52,3 +52,11 @@
 }
 .tabs__indicator--animated { transition: transform var(--duration-base) var(--ease-standard); }
 
+
+/* Tab labels never wrap; on phones the row tightens and, if still too wide, scrolls sideways */
+.tab__content { white-space: nowrap; }
+@media (max-width: 699px) {
+  .tabs { gap: var(--space-16); overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; }
+}

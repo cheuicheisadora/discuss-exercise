@@ -234,3 +234,7 @@ button:focus-visible,
   button:focus-visible,
   .search-field:focus-within { animation: none; }
 }
+
+/* My events: the scope tabs' panel keeps the page's section rhythm */
+.my-events__panel { display: flex; flex-direction: column; gap: var(--space-32); animation: le-fade-in var(--duration-base) var(--ease-out); }
+@media (max-width: 699px) { .my-events__panel { gap: var(--space-24); } }

@@ -106,7 +106,7 @@ export function App() {
   switch (route.name) {
     case 'my-events':
       section = 'my-events';
-      view = <MyEvents notify={notify} />;
+      view = <MyEvents scope={route.view ?? 'mine'} notify={notify} />;
       break;
     case 'my-past':
       section = 'my-events';
