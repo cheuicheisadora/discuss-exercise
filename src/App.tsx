@@ -59,7 +59,7 @@ export function App() {
     closeMenu(false);
     document.getElementById('main')?.scrollTo(0, 0);
     requestAnimationFrame(() => {
-      const ev = route.name === 'branch' || route.name === 'my-past' ? route.event : null;
+      const ev = route.name === 'branch' ? route.event : null;
       const row = ev ? document.getElementById(rowId(ev)) : null;
       if (row) {
         // An event is selected from the URL: the details panel takes focus (see SplitView); keep its row in view.
@@ -107,7 +107,7 @@ export function App() {
     case 'my-past':
       section = 'my-events';
       title = 'My past events';
-      view = <MyPastEvents eventId={route.event} announce={announce} notify={notify} />;
+      view = <MyPastEvents announce={announce} notify={notify} />;
       break;
     case 'branch': {
       section = 'branches';
@@ -138,7 +138,6 @@ export function App() {
           scope={route.slug as Scope}
           tab={tab}
           eventId={ev && (route.slug === 'all' || ev.branch === route.slug) ? ev.id : null}
-          from={route.from}
           menuTrigger={menu.triggerProps('title')}
           menuHover={menu.hoverProps('title')}
           menu={menuEl('title')}

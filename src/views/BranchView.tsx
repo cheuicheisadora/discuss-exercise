@@ -6,7 +6,7 @@ import { BranchTitle } from '../components/BranchTitle';
 import { SearchField } from '../components/SearchField';
 import { Select } from '../components/Select';
 import { Tab } from '../components/Tab';
-import { navigate, type From, type Tab as TabName } from '../router';
+import { navigate, type Tab as TabName } from '../router';
 import { IconArrowRight } from '../icons';
 import {
   DEFAULT_FILTERS,
@@ -29,8 +29,6 @@ interface Props {
   scope: Scope;
   tab: TabName;
   eventId: string | null;
-  /** Set when the user jumped here from My events / My past events: shows a back link. */
-  from?: From | null;
   menuTrigger: { expanded: boolean; onClick: () => void; onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void };
   menuHover: { onPointerEnter: (e: PointerEvent) => void; onPointerLeave: (e: PointerEvent) => void };
   menu?: ReactNode;
@@ -38,7 +36,7 @@ interface Props {
   notify: Notify;
 }
 
-export function BranchView({ scope, tab, eventId, from = null, menuTrigger, menuHover, menu, announce, notify }: Props) {
+export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, announce, notify }: Props) {
   const isAll = scope === 'all';
   const name = isAll ? 'All branches' : getBranch(scope)?.name ?? '';
   const upcoming = useMemo(() => upcomingIn(scope), [scope]);
@@ -54,7 +52,7 @@ export function BranchView({ scope, tab, eventId, from = null, menuTrigger, menu
   const selected = getEvent(eventId);
 
   const go = (t: TabName, ev: string | null, replace = true) =>
-    navigate({ name: 'branch', slug: scope, tab: t, event: ev, from }, { replace });
+    navigate({ name: 'branch', slug: scope, tab: t, event: ev }, { replace });
 
   /* ---------- Search across tabs ---------- */
   const otherTab: TabName = tab === 'upcoming' ? 'past' : 'upcoming';
@@ -196,15 +194,6 @@ export function BranchView({ scope, tab, eventId, from = null, menuTrigger, menu
 
   return (
     <div className="page page--split">
-      {from && (
-        <a className="text-link back-link" href={from === 'my-past' ? '#/my-events/past' : '#/my-events'}>
-          <span aria-hidden="true">←</span>
-          <span>
-            <span className="sr-only">Back to </span>
-            {from === 'my-past' ? 'My past events' : 'My events'}
-          </span>
-        </a>
-      )}
       <div className="branch-header">
         <h1 className="page-title" id="page-title" tabIndex={-1}>
           <span className="menu-anchor" {...menuHover}>

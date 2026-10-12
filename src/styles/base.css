@@ -198,6 +198,3 @@ button:focus-visible,
   button:focus-visible,
   .search-field:focus-within { animation: none; }
 }
-
-/* "← My events" link above the branch title (only when arriving from My events / My past events) */
-.back-link { margin-bottom: calc(-1 * var(--space-16)); }

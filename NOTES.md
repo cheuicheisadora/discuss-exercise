@@ -209,14 +209,16 @@ You asked that clicking an event in the Classic list should not jump to the bran
    - Esc and ✕ still return focus to the row.
    - `document.title` is set per screen: "My events · Library Events", "West Ashley · Upcoming · Library Events", "Search: poetry · Library Events", "Classic list · Library Events", and so on.
 3. **My events subtitle** now reads "Only events you coordinate at West Ashley and Summerville. To see everything at a branch, use Branches." The My past events subtitle was already clear, so I left it.
-4. **"← My events" back link:**
-   - Rows on My events link to the branch page with `&from=my-events`, which shows a "← My events" link above the branch title. It's a real `<a>` named "Back to My events" for screen readers.
-   - It survives tab switches, selection and refresh. It doesn't appear when you arrive from the Branches menu, search or the Classic list.
-   - The router also accepts `from=my-past` ("← My past events"), but rows on My past events open in place, so nothing links there today.
+4. **"← My events" back link:** built first, then **removed** after your follow-up (below). Since My events rows no longer jump to a branch page, there's nothing to go back from.
+5. **Follow-up: clicks on lists outside branch pages show the message.** You decided that only branch pages and All branches keep the details panel. Everywhere else events appear in a list, a click (or Enter) on a row shows "In the full product, this opens the full event page for {title}." and stays on the page. That covers My events, My past events and search results; the Classic list already did this.
+   - My past events lost its side panel. An empty "Select an event…" box that can never fill would be misleading, so the list now uses the full width, like My events. Its filters are unchanged.
+   - On these lists rows no longer have `aria-expanded`, because they don't control a panel.
+   - The action buttons ("Book room", "Schedule") keep their own messages.
 
 **Bug found while verifying (also on production before this round):** in about 1 of 3 test runs, a fast open → close of a dropdown left the closed list mounted, invisibly. The cause was a stale value in `usePresence` (the helper that keeps menus mounted for their exit animation). I rewrote it to use a functional state update; 6 out of 6 runs are now clean. Nothing visible changed.
 
 **Verified:**
-- Flows (a)–(d) pass, plus edge cases: reverse direction, no matches anywhere, Space key, the ✕ button, reopening the same row, refresh, and no back link from the menu or search.
+- Flows (a), (b) and (d) pass, plus edge cases: reverse direction, no matches anywhere, Space key, the ✕ button, reopening the same row. Flow (c) changed with the follow-up: clicking "Kids story hour" on My events now shows the message.
+- List clicks show the message (mouse and Enter) on My events, My past events and search, with axe clean on each. Branch pages and All branches still open the panel and move focus to its heading.
 - The 22 motion checks and 18 dropdown checks pass. axe reports 0 violations, and Lighthouse accessibility is 100.
-- Pixel comparison with production: only the My events subtitle and the focus ring on the panel heading (when arriving with `?event=`) differ.
+- Pixel comparison with production, before the follow-up: only the My events subtitle and the focus ring on the panel heading (when arriving with `?event=`) differed. After the follow-up, My past events also changed: its list is full width.

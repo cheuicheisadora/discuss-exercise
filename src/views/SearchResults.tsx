@@ -1,7 +1,6 @@
 import { SectionLabel } from '../components/SectionLabel';
 import { globalSearch, plural } from '../selectors';
-import { branchHref } from './MyEvents';
-import { EmptyState, RowList, noMatchText, type Notify } from './shared';
+import { EmptyState, RowList, actionMessage, noMatchText, type Notify } from './shared';
 
 export function SearchResults({ q, notify }: { q: string; notify: Notify }) {
   const query = q.trim();
@@ -26,13 +25,13 @@ export function SearchResults({ q, notify }: { q: string; notify: Notify }) {
       {upcoming.length > 0 && (
         <section className="section" aria-labelledby="res-upcoming">
           <SectionLabel as="h2" id="res-upcoming" label={`Upcoming · ${upcoming.length}`} />
-          <RowList events={upcoming} showTag hrefFor={branchHref} notify={notify} />
+          <RowList events={upcoming} showTag onOpen={(e) => notify(actionMessage('Open full event', e))} notify={notify} />
         </section>
       )}
       {past.length > 0 && (
         <section className="section" aria-labelledby="res-past">
           <SectionLabel as="h2" id="res-past" label={`Past · ${past.length}`} />
-          <RowList events={past} showTag hrefFor={branchHref} notify={notify} />
+          <RowList events={past} showTag onOpen={(e) => notify(actionMessage('Open full event', e))} notify={notify} />
         </section>
       )}
     </div>

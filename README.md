@@ -59,7 +59,7 @@ Examples:
 - `/` focuses the global search (from anywhere except a text field). Enter shows the results.
 - **Branch menu:** focus moves into "Find a branch". Typing filters. ↑/↓ (and Home/End) move, Enter opens the branch, Esc closes and returns focus to the trigger, Tab reaches "Show 5 more branches". A click outside also closes it.
 - **Tabs:** ←/→ (and Home/End) switch between Upcoming and Past.
-- **Rows:** each row is a single button (or a link on My events and in search results). The action button ("Book room", "Schedule") is a separate control beside it.
+- **Rows:** each row is a single button. On branch pages and All branches it opens the details panel and moves focus to its heading. On My events, My past events, search results and the Classic list it shows "In the full product, this opens the full event page for …". The action button ("Book room", "Schedule") is a separate control beside it.
 - **Preview:** Esc or ✕ closes it and returns focus to the row. The list keeps its scroll position.
 - **"Skip to content"** is the first Tab stop.
 

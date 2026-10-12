@@ -65,7 +65,7 @@ export function EventRow(p: EventRowProps) {
           type="button"
           className={cls}
           onClick={p.onSelect}
-          aria-expanded={p.selected}
+          aria-expanded={p.previewId ? p.selected : undefined}
           aria-controls={p.selected ? p.previewId : undefined}
         >
           {content}

@@ -45,12 +45,13 @@ export function actionMessage(action: string, e?: LibraryEvent) {
 interface RowOptions {
   showTag: boolean;
   selected?: boolean;
-  href?: string;
+  /** true on branch pages: the row opens the details panel (aria-expanded / aria-controls). */
+  opensPreview?: boolean;
   onSelect?: () => void;
   notify: Notify;
 }
 
-export function Row({ event: e, showTag, selected = false, href, onSelect, notify }: RowOptions & { event: LibraryEvent }) {
+export function Row({ event: e, showTag, selected = false, opensPreview = false, onSelect, notify }: RowOptions & { event: LibraryEvent }) {
   const s = statusOf(e);
   return (
     <EventRow
@@ -65,9 +66,8 @@ export function Row({ event: e, showTag, selected = false, href, onSelect, notif
       selected={selected}
       showTag={showTag}
       showAction={!!s.action}
-      href={href}
       onSelect={onSelect}
-      previewId={PREVIEW_ID}
+      previewId={opensPreview ? PREVIEW_ID : undefined}
       onAction={s.action ? () => notify(actionMessage(s.action as string, e)) : undefined}
     />
   );
@@ -84,7 +84,7 @@ function useEnteringIds(ids: string[]) {
   return entering;
 }
 
-export function RowList({ events, staggerOffset = 0, ...opts }: { events: LibraryEvent[]; staggerOffset?: number; selectedId?: string | null; onSelectId?: (id: string) => void; hrefFor?: (e: LibraryEvent) => string } & Omit<RowOptions, 'selected' | 'href' | 'onSelect'>) {
+export function RowList({ events, staggerOffset = 0, ...opts }: { events: LibraryEvent[]; staggerOffset?: number; selectedId?: string | null; onSelectId?: (id: string) => void; onOpen?: (e: LibraryEvent) => void } & Omit<RowOptions, 'selected' | 'href' | 'onSelect' | 'opensPreview'>) {
   const entering = useEnteringIds(events.map((e) => e.id));
   return (
     <ul className="list">
@@ -99,8 +99,8 @@ export function RowList({ events, staggerOffset = 0, ...opts }: { events: Librar
             showTag={opts.showTag}
             notify={opts.notify}
             selected={opts.selectedId === e.id}
-            href={opts.hrefFor?.(e)}
-            onSelect={opts.onSelectId ? () => opts.onSelectId?.(e.id) : undefined}
+            opensPreview={!!opts.onSelectId}
+            onSelect={opts.onSelectId ? () => opts.onSelectId?.(e.id) : opts.onOpen ? () => opts.onOpen?.(e) : undefined}
           />
         </li>
       ))}
