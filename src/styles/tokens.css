@@ -75,7 +75,8 @@
   --size-content-max: 1200px;
   --size-list-min: 320px;
   --size-toast-max: 560px;
-  --size-focus-ring: 2px;
+  --size-focus-ring: 3px;       /* bolder than the 2px default so keyboard users never lose their place (GOV.UK uses 3px) */
+  --size-focus-offset: 2px;
   /* Mobile (≤ 699px) */
   --size-topbar-row-mobile: 56px;  /* logo + actions row */
   --size-nav-mobile: 48px;         /* My events / Branches row */

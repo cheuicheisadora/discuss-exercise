@@ -25,13 +25,13 @@ export function Button({ style = 'primary', size = 'medium', label, icon, href, 
   );
   if (href) {
     return (
-      <a className={cls} href={href} aria-label={ariaLabel} onClick={onClick}>
+      <a tabIndex={0} className={cls} href={href} aria-label={ariaLabel} onClick={onClick}>
         {content}
       </a>
     );
   }
   return (
-    <button type="button" className={cls} aria-label={ariaLabel} onClick={onClick}>
+    <button tabIndex={0} type="button" className={cls} aria-label={ariaLabel} onClick={onClick}>
       {content}
     </button>
   );

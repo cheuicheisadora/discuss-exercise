@@ -1,5 +1,5 @@
 .kbd-help {
-  width: var(--size-menu);
+  width: calc(var(--size-menu) + var(--space-120));
   max-width: calc(100vw - 2 * var(--space-16));
   padding: var(--space-24);
   background: var(--color-bg-surface);
@@ -40,3 +40,9 @@
   color: var(--color-text-muted);
   font-family: var(--font-family);
 }
+
+.kbd-help__plus { color: var(--color-text-muted); align-self: center; }
+.kbd-help__keys > span { display: inline-flex; gap: var(--space-4); align-items: center; }
+.kbd-help__footer { display: flex; flex-direction: column; gap: var(--space-8); margin-top: var(--space-16); padding-top: var(--space-16); border-top: var(--border-width-1) solid var(--color-border-default); }
+.kbd-help__goto { background: none; border: 0; padding: 0; cursor: pointer; }
+.kbd-help__tip { margin: 0; color: var(--color-text-muted); }

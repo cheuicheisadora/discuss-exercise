@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { BranchMenu } from './components/BranchMenu';
 import { Toast } from './components/Toast';
 import { listArrowsFromAnywhere } from './keyboard';
+import { CommandPalette } from './components/CommandPalette';
 import { KeyboardHelp } from './components/KeyboardHelp';
 import { TopBar } from './components/TopBar';
 import { navigate, pageKey, useRoute } from './router';
@@ -48,10 +49,33 @@ export function App() {
     d.showModal();
   }, [closeMenu]);
 
+  /* ---------- "Go to…" palette (Ctrl+K / ⌘K), like GitHub, Linear and Slack ---------- */
+  const paletteRef = useRef<HTMLDialogElement>(null);
+  const paletteReturn = useRef<{ el: HTMLElement | null; hash: string }>({ el: null, hash: '' });
+  const openPalette = useCallback(() => {
+    const d = paletteRef.current;
+    if (!d || d.open) return;
+    helpRef.current?.close();
+    paletteReturn.current = { el: document.activeElement as HTMLElement, hash: location.hash };
+    closeMenu(false);
+    d.showModal();
+    d.querySelector('input')?.focus();
+  }, [closeMenu]);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== 'k' || !(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
+      e.preventDefault();
+      if (paletteRef.current?.open) paletteRef.current.close();
+      else openPalette();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [openPalette]);
+
   /* ---------- Esc dismisses a visible message (if nothing else used Esc) ---------- */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape' || e.defaultPrevented || !toast || helpRef.current?.open) return;
+      if (e.key !== 'Escape' || e.defaultPrevented || !toast || helpRef.current?.open || paletteRef.current?.open) return;
       window.clearTimeout(toastTimer.current);
       setToast(null);
     };
@@ -68,7 +92,7 @@ export function App() {
   /* ---------- "/" focuses the global search, "?" shows the shortcuts ---------- */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey || e.altKey || helpRef.current?.open) return;
+      if (e.ctrlKey || e.metaKey || e.altKey || helpRef.current?.open || paletteRef.current?.open) return;
       const t = e.target as HTMLElement;
       if (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName)) return;
       if (e.key === '?') {
@@ -160,7 +184,7 @@ export function App() {
               Branch not found
             </h1>
             <EmptyState title="We could not find that branch.">
-              <a className="text-link" href="#/my-events">
+              <a tabIndex={0} className="text-link" href="#/my-events">
                 Go to My events
               </a>
             </EmptyState>
@@ -212,16 +236,23 @@ export function App() {
 
   return (
     <div className="app">
-      <a className="skip-link" href="#main" onClick={(e) => {
+      <a tabIndex={0} className="skip-link" href="#main" onClick={(e) => {
         e.preventDefault();
         document.getElementById('page-title')?.focus();
       }}>
         Skip to content
       </a>
-      <button type="button" className="skip-link skip-link--second" onClick={openHelp}>
+      <button tabIndex={0} type="button" className="skip-link skip-link--second" onClick={openHelp}>
         Keyboard shortcuts
       </button>
-      <KeyboardHelp ref={helpRef} onClose={() => helpReturn.current?.focus()} />
+      <KeyboardHelp ref={helpRef} onClose={() => helpReturn.current?.focus()} onGoTo={openPalette} />
+      <CommandPalette
+        ref={paletteRef}
+        announce={announce}
+        onClose={() => {
+          if (location.hash === paletteReturn.current.hash) paletteReturn.current.el?.focus();
+        }}
+      />
       <TopBar
         ref={searchRef}
         section={section === 'classic' ? null : section}

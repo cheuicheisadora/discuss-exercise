@@ -72,7 +72,7 @@ export const TopBar = forwardRef<HTMLInputElement, TopBarProps>(function TopBar(
         </nav>
       </div>
       <div className="topbar__right">
-        <button
+        <button tabIndex={0}
           ref={toggleRef}
           type="button"
           className="topbar__search-toggle"

@@ -21,7 +21,7 @@ a { color: var(--color-brand-primary); }
 /* Visible focus on every interactive element. Never removed. */
 :focus-visible {
   outline: var(--size-focus-ring) solid var(--color-brand-primary);
-  outline-offset: var(--size-focus-ring);
+  outline-offset: var(--size-focus-offset);
 }
 
 .sr-only {
@@ -109,9 +109,9 @@ a { color: var(--color-brand-primary); }
   flex: 1 1 0;
   min-width: 0;
   overflow-y: auto;
-  /* room for the focus ring of the rows */
-  padding: var(--space-4);
-  margin: calc(-1 * var(--space-4));
+  /* room for the focus ring of the rows (3px ring + 2px gap) */
+  padding: var(--space-8);
+  margin: calc(-1 * var(--space-8));
 }
 .group { display: flex; flex-direction: column; gap: var(--space-12); }
 

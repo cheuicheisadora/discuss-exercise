@@ -31,13 +31,13 @@ export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavI
   );
   if (href) {
     return (
-      <a className={cls} href={href} aria-current={state ? 'page' : undefined} id={id}>
+      <a tabIndex={0} className={cls} href={href} aria-current={state ? 'page' : undefined} id={id}>
         {inner}
       </a>
     );
   }
   return (
-    <button
+    <button tabIndex={0}
       ref={ref}
       type="button"
       id={id}

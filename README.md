@@ -67,6 +67,7 @@ See NOTES.md section 14.
 
 ## Keyboard
 
+- **Ctrl+K (⌘K on Mac): "Go to…"** opens a box where you type to jump to any page, branch or event (like GitHub, Linear and Slack). ↑/↓ move, Enter goes, Esc closes. Events open in their branch with the details panel.
 - `/` focuses the global search (from anywhere except a text field). Enter shows the results.
 - **Branch menu:** focus moves into "Find a branch". Typing filters. ↑/↓ (and Home/End) move, Enter opens the branch, Esc closes and returns focus to the trigger, Tab reaches "Show 5 more branches". A click outside also closes it.
 - `?` opens a **Keyboard shortcuts** list (a modal dialog; Esc closes it and focus goes back). It is also the second Tab stop on every page.
@@ -75,6 +76,8 @@ See NOTES.md section 14.
 - **Rows:** each row is a single button. On branch pages and All branches it opens the details panel and moves focus to its heading. On My events, My past events, search results and the Classic list it shows "In the full product, this opens the full event page for …". The action button ("Book room", "Schedule") is a separate control beside it.
 - **Preview:** Esc or ✕ closes it and returns focus to the row. The list keeps its scroll position.
 - **Messages (toasts):** Esc dismisses them.
+- **Focus ring:** 3px brand blue with a 2px gap on every control, so the current position is always easy to see.
+- **Safari / Firefox on Mac:** every button and link has an explicit `tabindex="0"`, so Tab reaches it even when the browser's "Tab to links and buttons" setting is off. The shortcuts dialog also explains Option+Tab and the Safari setting.
 - **"Skip to content"** is the first Tab stop, and "Keyboard shortcuts" the second. Both appear only when focused.
 
 ## Project structure

@@ -16,7 +16,7 @@ export const BranchTitle = forwardRef<HTMLButtonElement, BranchTitleProps>(funct
   ref,
 ) {
   return (
-    <button
+    <button tabIndex={0}
       ref={ref}
       id={id}
       type="button"

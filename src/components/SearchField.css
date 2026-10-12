@@ -13,7 +13,7 @@
 }
 .search-field:focus-within {
   outline: var(--size-focus-ring) solid var(--color-brand-primary);
-  outline-offset: var(--size-focus-ring);
+  outline-offset: var(--size-focus-offset);
 }
 .search-field--global { width: var(--size-search-global); min-width: var(--size-search-min); flex-shrink: 1; }
 .search-field--page { width: var(--size-search-page); max-width: 100%; }

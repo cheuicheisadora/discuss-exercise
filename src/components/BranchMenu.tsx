@@ -220,7 +220,7 @@ export function BranchMenu({ current, onSelect, onClose, triggerId, announce, an
       </div>
       {options.length === 0 && <p className="branch-menu__empty t-body">No branches match "{query.trim()}".</p>}
       {hiddenCount > 0 && (
-        <button type="button" className="branch-menu__more t-button" onClick={showMore}>
+        <button tabIndex={0} type="button" className="branch-menu__more t-button" onClick={showMore}>
           Show {hiddenCount} more branches
         </button>
       )}

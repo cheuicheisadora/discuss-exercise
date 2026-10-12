@@ -152,7 +152,7 @@ export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, 
   if (tab === 'upcoming' && upcoming.length === 0) {
     list = (
       <EmptyState title={`No upcoming events at ${name}`}>
-        <a className="text-link" href={`#/branch/${scope}?tab=past`}>
+        <a tabIndex={0} className="text-link" href={`#/branch/${scope}?tab=past`}>
           See past events
         </a>
       </EmptyState>
@@ -161,7 +161,7 @@ export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, 
     list = (
       <EmptyState title={`No ${tab} events match "${q}".`}>
         <p className="empty-state__text t-body">{otherMatchText}.</p>
-        <a
+        <a tabIndex={0}
           className="text-link"
           href={`#/branch/${scope}?tab=${otherTab}`}
           onClick={(e) => {

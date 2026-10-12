@@ -50,7 +50,7 @@ export function MyEvents({ scope, notify }: { scope: MyScope; notify: Notify }) 
       </div>
 
       {/* The past-events link follows the tab: your own past events, or all past events at your branches. */}
-      <a className="text-link" href={scope === 'branches' ? '#/my-events/past?view=branches' : '#/my-events/past'}>
+      <a tabIndex={0} className="text-link" href={scope === 'branches' ? '#/my-events/past?view=branches' : '#/my-events/past'}>
         {scope === 'branches' ? 'See all past events' : 'See my past events'}
         <IconArrowRight />
       </a>

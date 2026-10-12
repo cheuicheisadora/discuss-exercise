@@ -118,7 +118,7 @@ export function Select({ label, value, options, onChange }: SelectProps) {
 
   return (
     <div className="select-field" ref={wrapRef}>
-      <button
+      <button tabIndex={0}
         ref={buttonRef}
         type="button"
         className="select"

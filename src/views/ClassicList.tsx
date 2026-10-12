@@ -67,7 +67,7 @@ export function ClassicList({ announce, notify }: { announce: (m: string) => voi
                   scope="col"
                   aria-sort={sort.col === c.key ? (sort.dir === 1 ? 'ascending' : 'descending') : 'none'}
                 >
-                  <button type="button" className="classic__sort t-overline" onClick={() => toggle(c.key)}>
+                  <button tabIndex={0} type="button" className="classic__sort t-overline" onClick={() => toggle(c.key)}>
                     {c.label}
                     <span className="classic__arrow" aria-hidden="true">
                       {sort.col === c.key ? (sort.dir === 1 ? '▲' : '▼') : ''}
@@ -84,7 +84,7 @@ export function ClassicList({ announce, notify }: { announce: (m: string) => voi
                 <tr key={e.id} role="row">
                   <td role="cell" data-label="Date" className="classic__date t-body">{e.date ? longDate(e.date) : e.target ?? 'No date yet'}</td>
                   <td role="cell" data-label="Title" className="classic__title-cell">
-                    <button
+                    <button tabIndex={0}
                       type="button"
                       className="classic__title t-button"
                       onClick={() => notify(actionMessage('Open full event', e))}
