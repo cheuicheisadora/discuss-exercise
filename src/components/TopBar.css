@@ -91,3 +91,34 @@
   .topbar__right .btn--neutral { width: var(--size-control-md); padding: 0; }
   .topbar__right .profile { gap: 0; }
 }
+
+/* ---------- Search suggestions: same surface, rows and keyboard highlight as the Branch menu ---------- */
+.topbar__search { position: relative; }
+.search-suggest {
+  position: absolute;
+  top: calc(100% + var(--space-4));
+  left: 0;
+  z-index: 30;
+  width: max(100%, var(--size-menu));
+  max-width: calc(100vw - var(--space-32));
+  padding: var(--space-8);
+  background: var(--color-bg-surface);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-menu);
+  text-align: left;
+  animation: le-menu-in var(--duration-base) var(--ease-out);
+}
+.search-suggest__list { display: flex; flex-direction: column; gap: var(--space-4); }
+.search-suggest__all { color: var(--color-brand-primary); }
+.search-suggest--keyboard .branch-item--hover {
+  outline: var(--size-focus-ring) solid var(--color-brand-primary);
+  outline-offset: calc(-1 * var(--size-focus-ring));
+}
+@media (max-width: 699px) {
+  .search-suggest { width: 100%; max-width: none; }
+}
+/* each suggestion: title over "Branch · date", so dates never wrap */
+.search-suggest .branch-item { flex-direction: column; align-items: flex-start; gap: 0; }
+.search-suggest .branch-item__name { white-space: normal; }
+.search-suggest .branch-item__summary { text-align: left; }

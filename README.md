@@ -69,6 +69,7 @@ See NOTES.md section 14.
 
 - **Ctrl+K (⌘K on Mac): "Go to…"** opens a box where you type to jump to any page, branch or event (like GitHub, Linear and Slack). ↑/↓ move, Enter goes, Esc closes. Events open in their branch with the details panel.
 - `/` focuses the global search (from anywhere except a text field). Enter shows the results.
+- **Search suggestions:** while typing in the top bar search, up to 6 matching events appear under the field (title match; upcoming first, then past). ↓/↑ choose, Enter opens the event in its branch with the details panel, Esc closes the list and keeps the text. With nothing chosen, Enter shows all results as before. The last row is "See all results for …".
 - **Branch menu:** focus moves into "Find a branch". Typing filters. ↑/↓ (and Home/End) move, Enter opens the branch, Esc closes and returns focus to the trigger, Tab reaches "Show 5 more branches". A click outside also closes it.
 - `?` opens a **Keyboard shortcuts** list (a modal dialog; Esc closes it and focus goes back). It is also the second Tab stop on every page.
 - **Lists:** ↑/↓ move between events, across groups ("This week", "Later"…). Home/End jump to the first/last event. Enter opens it. You don't need to be on a row first: from the page heading, empty space or a filter, ↓ goes to the first event (or the selected one) and ↑ to the last. This works on every list, including the Classic list titles, so a long list no longer takes dozens of Tab presses.

@@ -266,3 +266,19 @@ if (import.meta.env.DEV) {
   console.assert(upcomingIn('west-ashley').length === 3 && pastIn('west-ashley').length === 4, 'West Ashley tab counts');
   console.assert(upcomingIn('dorchester-road').length === 0, 'Dorchester Road must have no upcoming events');
 }
+
+/* ---------------- Search suggestions (top bar) ---------------- */
+
+/** Events whose title contains the text or has a word starting with each typed word. Upcoming first (soonest), then past (newest). */
+export function suggestEvents(q: string, max = 6) {
+  const needle = q.trim().toLowerCase();
+  if (!needle) return [];
+  const hit = (e: LibraryEvent) => {
+    const t = e.title.toLowerCase();
+    if (t.includes(needle)) return true;
+    const words = t.split(/[^a-z0-9]+/).filter(Boolean);
+    return needle.split(/\s+/).every((w) => words.some((h) => h.startsWith(w)));
+  };
+  const hits = EVENTS.filter(hit);
+  return [...hits.filter((e) => !isPast(e)).sort(byDateAsc), ...hits.filter(isPast).sort(byDateDesc)].slice(0, max);
+}

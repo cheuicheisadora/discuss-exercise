@@ -340,3 +340,22 @@ Smallest changes possible; nothing else changed (layout, styles, data, other beh
   - axe: 0 violations;
   - Lighthouse accessibility: 100;
   - all earlier keyboard, dropdown, scope, past, motion and mobile suites still pass. The only failure is the outdated "My events subtitle" check from round 8.
+
+## 20. Search suggestions (round 12)
+
+You asked for suggestions while typing in the search, e.g. "hall" showing the two Halloween events right under the field.
+- **Where:** the top bar search ("Search all events"). Branch pages already filter their list as you type, so they didn't need a second list.
+- **Pattern:** the ARIA combobox + listbox used by Google and GitHub. It uses the same surface, rows and keyboard highlight as the Branch menu (it reuses `BranchItem`). Each row shows the title, with "Branch · date" underneath (and "Past ·" for past events), so dates never wrap, even on phones.
+- **What it matches:** event titles only, with the same rule as search (text inside the title, or every typed word starting a title word). At most 6 rows, upcoming soonest first, then past newest first. I left out rooms and branch names on purpose: "hall" would otherwise also suggest the two events in the "Main hall" room, which isn't what you meant. The full results page still matches title, room and branch.
+- **Keys:**
+  - ↓/↑ choose, wrapping around, and ↓ reopens a closed list.
+  - Enter on a suggestion opens that event in its branch with the details panel, and focus goes to the details heading.
+  - Enter with nothing chosen goes to the results page, as before.
+  - The last row is "See all results for "…"", or "No events match "…". Search anyway".
+  - Esc closes the list and keeps the text; Tab or a click elsewhere closes it too.
+  - A screen reader hears "2 suggestions" through a polite status message.
+- **Files:** `src/selectors.ts` (`suggestEvents`), `src/components/TopBar.tsx`, `src/components/TopBar.css`.
+- **Verified:**
+  - 18 scripted checks: keyboard, mouse, Esc, Tab, no-match, axe with the list open, and the list fitting a 390px phone. All pass.
+  - The earlier suites: palette, keyboard, the round-11 fixes, dropdown, scope, past, motion and mobile. All pass, except the old outdated subtitle check.
+  - Lighthouse accessibility: 100.
