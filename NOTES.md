@@ -327,3 +327,16 @@ You said the site still wasn't usable with only a keyboard, and asked me to copy
   - Lighthouse: accessibility 100, best practices 100;
   - pixel comparison with production: the only differences are the thicker ring and the 4px list edge.
   - Two old test selectors broke, because the closed Go to dialog adds a hidden listbox to the page. I fixed the tests, not the app.
+
+## 19. Four re-test fixes (round 11)
+
+Smallest changes possible; nothing else changed (layout, styles, data, other behaviour).
+1. **Tab counts follow filters.** On branch pages and All branches, while a Type, Status or Year filter or the in-page search is active, the active tab's count is the number of events listed (Main Library + Status: Needs attention → "Upcoming 1"). Cleared filters bring back the full count. The other tab keeps its full count, because each tab has its own filters. (`src/views/BranchView.tsx`)
+2. **Search.** Matching was already a case-insensitive substring match on title, room and branch, so "poet" and "poetry" already found all 3 poetry events. I added word-start matching for each typed word, so multi-word queries in any order work ("poet james" → both Poetry open mic). **Honest note:** "poem" still finds nothing. It isn't the start of any word or a substring of any title, and you asked for no fuzzy or typo matching. Making "poem" find "poetry" would need fuzzy matching or synonyms. (`src/selectors.ts`)
+3. **Same-day order.** Sorting is now by date, then start time, then title. Past lists stay newest first, with later start times first within a day. This applies everywhere `byDateAsc`/`byDateDesc` is used: grouped lists, My events, search, the Go to box, and the Classic list's tie-breaks. On All branches, Oct 12 is now Tech help desk (1:00 pm) → English conversation group (5:30 pm), and Oct 13 is Baby rhymes (10:00 am) → Chess club / Homework help (4:00 pm) → Genealogy basics (6:00 pm). (`src/selectors.ts`)
+4. **Undated tile.** No month any more, just the dash on the neutral tile. The accessible name starts with "No date yet". "Target: late October" is unchanged. (`src/components/DateTile.tsx`)
+- **Verified:**
+  - scripted checks (a)–(d): all pass except "poem", as explained;
+  - axe: 0 violations;
+  - Lighthouse accessibility: 100;
+  - all earlier keyboard, dropdown, scope, past, motion and mobile suites still pass. The only failure is the outdated "My events subtitle" check from round 8.

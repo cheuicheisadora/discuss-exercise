@@ -50,6 +50,9 @@ export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, 
   const base = tab === 'upcoming' ? upcoming : past;
   const visible = applyFilters(base, f).filter((e) => matchesText(e, query, isAll));
   const selected = getEvent(eventId);
+  // The active tab's count follows its filters and the search; the other tab keeps its full count.
+  const narrowed = query.trim() !== '' || f.type !== 'all' || f.status !== 'all' || f.year !== 'all';
+  const countFor = (t: TabName, full: number) => (t === tab && narrowed ? visible.length : full);
 
   const go = (t: TabName, ev: string | null, replace = true) =>
     navigate({ name: 'branch', slug: scope, tab: t, event: ev }, { replace });
@@ -221,7 +224,7 @@ export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, 
           id="tab-upcoming"
           controls="panel-upcoming"
           label="Upcoming"
-          count={upcoming.length}
+          count={countFor('upcoming', upcoming.length)}
           state={tab === 'upcoming' ? 'selected' : 'default'}
           onSelect={() => switchTab('upcoming')}
           onKeyDown={onTabKey}
@@ -231,7 +234,7 @@ export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, 
           id="tab-past"
           controls="panel-past"
           label="Past"
-          count={past.length}
+          count={countFor('past', past.length)}
           state={tab === 'past' ? 'selected' : 'default'}
           onSelect={() => switchTab('past')}
           onKeyDown={onTabKey}

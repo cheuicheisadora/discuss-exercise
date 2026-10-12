@@ -108,16 +108,28 @@ export function plural(n: number, one: string, many: string) {
 
 /* ---------------- Sorting ---------------- */
 
-/** Soonest first, undated last. */
-export function byDateAsc(a: LibraryEvent, b: LibraryEvent) {
-  if (a.date === b.date) return a.title.localeCompare(b.title);
-  if (a.date === null) return 1;
-  if (b.date === null) return -1;
-  return a.date < b.date ? -1 : 1;
+/** "1:00 pm" → minutes after midnight; no time sorts after timed events. */
+function minutesOf(time?: string) {
+  const m = time?.match(/^(\d{1,2}):(\d{2})\s*(am|pm)$/i);
+  if (!m) return 24 * 60;
+  return ((+m[1] % 12) + (m[3].toLowerCase() === 'pm' ? 12 : 0)) * 60 + +m[2];
 }
-/** Most recent first. */
+/** Date and start time: soonest first, undated last. */
+function byWhen(a: LibraryEvent, b: LibraryEvent) {
+  if (a.date !== b.date) {
+    if (a.date === null) return 1;
+    if (b.date === null) return -1;
+    return a.date < b.date ? -1 : 1;
+  }
+  return minutesOf(a.time) - minutesOf(b.time);
+}
+/** Soonest first (date, then start time), undated last; same time → by title. */
+export function byDateAsc(a: LibraryEvent, b: LibraryEvent) {
+  return byWhen(a, b) || a.title.localeCompare(b.title);
+}
+/** Most recent first (date, then start time); same time → by title. */
 export function byDateDesc(a: LibraryEvent, b: LibraryEvent) {
-  return -byDateAsc(a, b);
+  return -byWhen(a, b) || a.title.localeCompare(b.title);
 }
 
 /* ---------------- Collections ---------------- */
@@ -190,7 +202,10 @@ export function matchesText(e: LibraryEvent, q: string, includeBranch: boolean) 
   const needle = q.trim().toLowerCase();
   if (!needle) return true;
   const hay = [e.title, e.room ?? '', includeBranch ? branchName(e.branch) : ''].join(' ').toLowerCase();
-  return hay.includes(needle);
+  if (hay.includes(needle)) return true;
+  // otherwise every typed word must start a word ("poet james" finds "Poetry open mic" at James Island)
+  const words = hay.split(/[^a-z0-9]+/).filter(Boolean);
+  return needle.split(/\s+/).every((w) => words.some((h) => h.startsWith(w)));
 }
 
 export type StatusFilter = 'all' | 'attention' | 'confirmed';
