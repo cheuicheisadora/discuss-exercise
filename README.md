@@ -1,6 +1,6 @@
 # Library Events: prototype
 
-**Live:** https://discuss-exercise-livid.vercel.app
+**Live:** https://discuss-events.vercel.app
 
 An interactive prototype of a browse-and-navigate tool for library events coordinators, built from the **DashStack › Library Events** Figma file. The 5 Figma screens are states of one single-page app.
 
