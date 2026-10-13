@@ -38,7 +38,7 @@ Examples:
 
 | State | How to get there |
 |---|---|
-| Screen 01: My events | Open the app, or click **My events** in the top bar |
+| Screen 01: My events | Open the app, or click **My events** in the top bar. The first section, **Next steps**, lists your events that need something (Book room, Schedule, Promote, Manage waitlist) |
 | Screen 02: Branch menu open | Click **Branches ▾** in the top bar, or the branch title (e.g. "West Ashley ⌄") on a branch page |
 | Screen 03: Branch view, Upcoming | Branch menu → **West Ashley** |
 | Screen 04: Upcoming, event selected | On West Ashley, click **Kids story hour** |

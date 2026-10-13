@@ -401,3 +401,13 @@ You liked the filters on the other prototype (discuss-exercise.vercel.app) and a
 - **Rules:** "Last 30 days" and "Last 3 months" count back from the fixed "today" (Oct 12, 2026). Years are listed only when there are past events from that year.
 - **Where else:** My past events uses the same filter, so it changed too. The internal filter key is still `year`, so other code didn't need to change.
 - **Verified:** 8 new checks (options, counts, Past tab count, chip, West Ashley 2025, My past events, axe), all earlier suites, axe 0 violations, Lighthouse accessibility 100.
+
+## 22. "Next steps" on My events (round 14)
+
+You asked to bring the "Next step" idea to My events instead of full filters (only 5–7 events there). You also asked whether "Needs attention" could be named better.
+- **Name: "Needs attention" → "Next steps".** The section now holds more than urgent problems, so "attention" no longer fit. "Next steps" is also the name of the filter and of the details-panel row, so the whole site uses one word for "what do I do next". To-do-style section names are common in Linear, Jira and Asana. **Deviation from Figma:** screen 01 says "Needs attention".
+- **Unchanged on purpose:** the **Status** value "Needs attention" stays, as does "1 needs attention" in the Branch menu. Those describe a *problem* (no room, no date), with the red/amber badges, which is still the right meaning.
+- **What the section shows:** every upcoming event in scope with a next step. Blockers come first (Book room, Schedule), then the rest (Promote, Manage waitlist), each by date. Every row has its next step as the button. "Promote" and "Manage waitlist" show the same "In the full product…" message as the other buttons. **Upcoming** now holds only the events with nothing to do. Tab totals are unchanged (5 / 7).
+- **Data change (honest note):** with the original data, none of Ana's events was under half full or full, so the new section would look exactly like the old one. To show the feature, I changed **one** value: Resume workshop (West Ashley, Ana) registrations went from "9 of 16 spots" to "6 of 16 spots". It now appears under Next steps with "Promote", and on branch pages Next step: Promote counts 7 instead of 6. No required count (week / attention per branch) changed. Revert that line in `src/data.ts` if you'd rather keep the original numbers.
+- **Files:** `src/selectors.ts` (`myNextSteps`, `myUpcoming`), `src/views/MyEvents.tsx`, `src/views/shared.tsx` (row button from the next step, messages), `src/data.ts` (one registrations value).
+- **Verified:** the new My events checks (sections, buttons Book room / Schedule / Promote, message, axe), all earlier suites (the expected order change in the scope suite aside), axe 0 violations.

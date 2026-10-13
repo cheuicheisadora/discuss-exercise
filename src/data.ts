@@ -104,7 +104,7 @@ export const EVENTS: LibraryEvent[] = [
   {
     id: 'wa-resume-workshop', branch: 'west-ashley', title: 'Resume workshop', type: 'workshops',
     date: '2026-10-24', time: '2:00 pm', room: 'Room B', coordinator: ANA,
-    registrations: '9 of 16 spots', ageGroup: 'Adults',
+    registrations: '6 of 16 spots', ageGroup: 'Adults',
     notes: 'Book the laptop cart the day before.',
   },
   {

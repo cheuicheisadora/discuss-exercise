@@ -3,7 +3,7 @@ import { Button } from '../components/Button';
 import { SectionLabel } from '../components/SectionLabel';
 import { IconArrowRight, IconPlus } from '../icons';
 import { navigate } from '../router';
-import { myAttention, myUpcoming, type MyScope } from '../selectors';
+import { myNextSteps, myUpcoming, type MyScope } from '../selectors';
 import { ScopeTabs } from './ScopeTabs';
 import { RowList, actionMessage, type Notify } from './shared';
 
@@ -13,9 +13,9 @@ export function myBranchesText() {
 }
 
 export function MyEvents({ scope, notify }: { scope: MyScope; notify: Notify }) {
-  const attention = myAttention(scope);
+  const nextSteps = myNextSteps(scope);
   const upcoming = myUpcoming(scope);
-  const count = (s: MyScope) => myAttention(s).length + myUpcoming(s).length;
+  const count = (s: MyScope) => myNextSteps(s).length + myUpcoming(s).length;
   const select = (s: MyScope) => {
     if (s !== scope) navigate({ name: 'my-events', view: s }, { replace: true });
   };
@@ -36,10 +36,10 @@ export function MyEvents({ scope, notify }: { scope: MyScope; notify: Notify }) 
       <ScopeTabs scope={scope} counts={{ mine: count('mine'), branches: count('branches') }} onSelect={select} idPrefix="my" />
 
       <div key={scope} className="my-events__panel" role="tabpanel" id={`my-panel-${scope}`} aria-labelledby={`my-tab-${scope}`}>
-        {attention.length > 0 && (
-          <section className="section" aria-labelledby="sec-attention">
-            <SectionLabel as="h2" id="sec-attention" label="Needs attention" showCount count={attention.length} />
-            <RowList events={attention} showTag onOpen={open} notify={notify} />
+        {nextSteps.length > 0 && (
+          <section className="section" aria-labelledby="sec-next">
+            <SectionLabel as="h2" id="sec-next" label="Next steps" showCount count={nextSteps.length} />
+            <RowList events={nextSteps} showTag onOpen={open} notify={notify} nextStepAction />
           </section>
         )}
 

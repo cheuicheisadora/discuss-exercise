@@ -33,6 +33,10 @@ export function actionMessage(action: string, e?: LibraryEvent) {
       return `In the full product, this opens room booking for ${t}.`;
     case 'Schedule':
       return `In the full product, this opens the scheduler to pick a date for ${t}.`;
+    case 'Promote':
+      return `In the full product, this opens promotion tools (newsletter, social posts, flyers) for ${t}.`;
+    case 'Manage waitlist':
+      return `In the full product, this opens the waitlist for ${t}.`;
     case 'Reuse this event':
       return `In the full product, this opens a new event prefilled with ${t}.`;
     case 'Open full event':
@@ -50,10 +54,13 @@ interface RowOptions {
   opensPreview?: boolean;
   onSelect?: () => void;
   notify: Notify;
+  /** My events "Next steps": rows without a blocker also get their next step as the action button (Promote, Manage waitlist). */
+  nextStepAction?: boolean;
 }
 
-export function Row({ event: e, showTag, selected = false, opensPreview = false, onSelect, notify }: RowOptions & { event: LibraryEvent }) {
-  const s = statusOf(e);
+export function Row({ event: e, showTag, selected = false, opensPreview = false, onSelect, notify, nextStepAction = false }: RowOptions & { event: LibraryEvent }) {
+  const st = statusOf(e);
+  const s = { ...st, action: st.action ?? (nextStepAction ? nextStepOf(e)?.label : undefined) };
   return (
     <EventRow
       id={rowId(e.id)}
@@ -99,6 +106,7 @@ export function RowList({ events, staggerOffset = 0, ...opts }: { events: Librar
             event={e}
             showTag={opts.showTag}
             notify={opts.notify}
+            nextStepAction={opts.nextStepAction}
             selected={opts.selectedId === e.id}
             opensPreview={!!opts.onSelectId}
             onSelect={opts.onSelectId ? () => opts.onSelectId?.(e.id) : opts.onOpen ? () => opts.onOpen?.(e) : undefined}

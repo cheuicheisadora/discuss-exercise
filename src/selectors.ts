@@ -189,8 +189,14 @@ const inScope = (e: LibraryEvent, scope: MyScope) => (scope === 'mine' ? isMine(
 export function myAttention(scope: MyScope = 'mine') {
   return EVENTS.filter((e) => inScope(e, scope) && needsAttention(e)).sort(byDateAsc);
 }
+/** My events "Next steps": every upcoming event with something to do. Blockers (room, date) first, then by date. */
+export function myNextSteps(scope: MyScope = 'mine') {
+  const urgent = (e: LibraryEvent) => (e.blocker ? 0 : 1);
+  return EVENTS.filter((e) => inScope(e, scope) && nextStepOf(e) !== null).sort((a, b) => urgent(a) - urgent(b) || byDateAsc(a, b));
+}
+/** My events "Upcoming": the rest, with nothing to do. */
 export function myUpcoming(scope: MyScope = 'mine') {
-  return EVENTS.filter((e) => inScope(e, scope) && isUpcoming(e) && !e.blocker).sort(byDateAsc);
+  return EVENTS.filter((e) => inScope(e, scope) && isUpcoming(e) && nextStepOf(e) === null).sort(byDateAsc);
 }
 export function myPast(scope: MyScope = 'mine') {
   return EVENTS.filter((e) => inScope(e, scope) && isPast(e)).sort(byDateDesc);
