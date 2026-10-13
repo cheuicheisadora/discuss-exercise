@@ -62,6 +62,27 @@ export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, 
   const go = (t: TabName, ev: string | null, replace = true) =>
     navigate({ name: 'branch', slug: scope, tab: t, event: ev }, { replace });
 
+  /* ---------- A filter or the search hid the selected event: close the details ----------
+     Close the panel and drop ?event= from the URL, so the event doesn't reopen by itself if it comes back.
+     Focus goes to the first event in the list, or to the first filter button when the list is empty.
+     Exception: while typing in the search field, focus stays there. */
+  const visibleSig = visible.map((e) => e.id).join('|');
+  const mounted = useRef(false);
+  useEffect(() => {
+    const first = !mounted.current;
+    mounted.current = true;
+    if (!eventId || visible.some((e) => e.id === eventId)) return;
+    go(tab, null);
+    if (first) return; // arriving from a link: nothing to move focus from
+    requestAnimationFrame(() => {
+      const a = document.activeElement;
+      if (a instanceof HTMLInputElement && a.closest('.branch-header')) return;
+      const target =
+        document.querySelector<HTMLElement>('.list-column .event-row__main') ?? document.querySelector<HTMLElement>('.filters .select');
+      target?.focus();
+    });
+  }, [visibleSig]);
+
   /* ---------- Search across tabs ---------- */
   const otherTab: TabName = tab === 'upcoming' ? 'past' : 'upcoming';
   const q = query.trim();

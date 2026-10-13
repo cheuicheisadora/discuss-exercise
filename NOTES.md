@@ -422,3 +422,17 @@ Then I ran a cross-check of everything that should match, on all 13 branch pages
 - **My events:** Next steps + Upcoming = the tab count, the section pill = its rows, every Next steps row has a button and Upcoming rows have none.
 - **Classic list** = All branches Upcoming + Past.
 - **Search:** suggestions are always a subset of the full search results.
+
+## 23. Details panel closes when a filter hides the selected event (round 15)
+
+**Bug you found:** on West Ashley › Past, open Halloween crafts (Oct 30, 2025), then set Date to "Last 3 months". The event left the list, but the panel kept showing it.
+**Fix** (`src/views/BranchView.tsx`, one effect that runs whenever the listed events change):
+- **Closing:** if the selected event is no longer listed (because of a filter or the in-page search), the panel closes with its usual animation and the empty state appears ("Select an event to see its details here."). `?event=` is removed from the URL, so the event does **not** reopen by itself if it comes back (e.g. after removing the chip).
+- **Focus** moves to the first event in the list, or to the first filter button when the list is empty, so it's never lost.
+  - **Deviation from your spec:** while you're typing in the in-page search, focus stays in the field. Moving it to a row after every keystroke would interrupt typing (the next letter would go nowhere). The panel still closes and the URL is still cleaned.
+- **Chips and "Clear all"** only ever add events back, so on their own they can never hide the selection. The rule covers them anyway.
+- **Deep links:** arriving from a link with `?event=` for an event that isn't listed on that tab also clears the selection, but doesn't move focus (nothing to move it from).
+- **Verified:**
+  - 19 scripted checks. They cover your exact case, a filter that keeps the event (the panel stays open), keyboard-only use, an empty list (focus on the filter button), the in-page search, Clear all, the event coming back without reopening, the deep link, and axe.
+  - The 409 consistency checks and all earlier suites.
+  - axe: 0 violations. Lighthouse accessibility: 100.
