@@ -279,7 +279,7 @@ export function Filters({
     ...(years.length > 1 ? years.map((y) => ({ value: String(y), label: String(y), count: n({ year: String(y) }) })) : []),
   ];
   const timeframeOptions = [
-    { value: 'all', label: 'Any time', count: n({ timeframe: 'all' }) },
+    { value: 'all', label: 'Any date', count: n({ timeframe: 'all' }) },
     ...(['this-week', 'next-week', 'later', 'none'] as const).map((k) => ({ value: k, label: GROUP_LABELS[k], count: n({ timeframe: k }) })),
   ];
   const statusOptions = [
@@ -290,17 +290,17 @@ export function Filters({
   const actionOptions = [
     { value: 'all', label: 'Any', count: n({ action: 'all' }) },
     ...(Object.keys(ACTION_LABELS) as (keyof typeof ACTION_LABELS)[]).map((k) => ({ value: k, label: ACTION_LABELS[k], count: n({ action: k }) })),
-    { value: 'none', label: 'Nothing to do', count: n({ action: 'none' }) },
+    { value: 'none', label: 'None', count: n({ action: 'none' }) },
   ];
 
   /* Active filters as removable chips + "Clear all" (Linear, GitHub, Gmail) */
   const shown: { key: keyof Filters; name: string; options: { value: string; label: string }[] }[] =
     tab === 'upcoming'
       ? [
-          { key: 'timeframe', name: 'Timeframe', options: timeframeOptions },
+          { key: 'timeframe', name: 'Date', options: timeframeOptions },
           { key: 'type', name: 'Type', options: typeOptions },
           { key: 'status', name: 'Status', options: statusOptions },
-          { key: 'action', name: 'Action', options: actionOptions },
+          { key: 'action', name: 'Next step', options: actionOptions },
         ]
       : [
           { key: 'year', name: 'Year', options: yearOptions },

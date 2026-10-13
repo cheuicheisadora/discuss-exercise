@@ -384,3 +384,13 @@ You liked the filters on the other prototype (discuss-exercise.vercel.app) and a
   - Lighthouse accessibility: 100 on All branches, a Past tab and My past events.
   - Earlier suites: all pass after updating them. Their selectors found filters by position (Type used to be first) and by exact option name (names now include the count). The only real failures left are two outdated checks: the round-8 subtitle, and one that compares an option's raw text ("Talks" is now "Talks" + its count).
   - Pixel comparison with production: only the filters row on Upcoming tabs changed; everything else is identical.
+
+**Follow-up: wording.** You found "Timeframe" too technical and asked me to align the other new words with platform conventions and with words the site already uses:
+- **Timeframe → Date** (Eventbrite, Meetup, Google Calendar); "Any time" → "Any date". It also matches "Sorted by date" next to it.
+- **Action → Next step**, the same name as the row in the details panel, so the filter and the panel agree.
+- **Option names now match the buttons already on the rows:** "Book a room" → **Book room** and "Set a date" → **Schedule** (the row buttons and the "Not scheduled" status).
+- "Promote it" → **Promote** and "Manage the waitlist" → **Manage waitlist**: short verbs, as Linear and Jira write tasks.
+- "Nothing to do" → **None** (GitHub, Linear).
+- **The details panel says why:** "Book room: no room yet", "Schedule: no date yet", "Promote: 14 of 35 spots taken", "Manage waitlist: the event is full".
+- **Unchanged:** Type, Status, Needs attention, Confirmed, "Clear all" (Gmail, Airbnb), "Sorted by date".
+- **Re-verified:** filter suite 18/18, earlier suites unchanged, axe 0 violations, Lighthouse accessibility 100.

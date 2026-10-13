@@ -229,10 +229,10 @@ export function isFiltered(f: Filters) {
 }
 
 export const ACTION_LABELS: Record<ActionKey, string> = {
-  'book-room': 'Book a room',
-  'set-date': 'Set a date',
-  promote: 'Promote it',
-  waitlist: 'Manage the waitlist',
+  'book-room': 'Book room',
+  'set-date': 'Schedule',
+  promote: 'Promote',
+  waitlist: 'Manage waitlist',
 };
 
 /**
@@ -241,13 +241,13 @@ export const ACTION_LABELS: Record<ActionKey, string> = {
  */
 export function nextStepOf(e: LibraryEvent): { key: ActionKey; label: string; detail: string } | null {
   if (isPast(e)) return null;
-  if (e.blocker === 'needs-room') return { key: 'book-room', label: ACTION_LABELS['book-room'], detail: 'Book a room' };
-  if (e.blocker === 'not-scheduled') return { key: 'set-date', label: ACTION_LABELS['set-date'], detail: 'Set a date' };
+  if (e.blocker === 'needs-room') return { key: 'book-room', label: ACTION_LABELS['book-room'], detail: 'Book room: no room yet' };
+  if (e.blocker === 'not-scheduled') return { key: 'set-date', label: ACTION_LABELS['set-date'], detail: 'Schedule: no date yet' };
   const m = e.registrations?.match(/^(\d+) of (\d+) (\w+)/);
   if (!m) return null;
   const [taken, total, unit] = [+m[1], +m[2], m[3]];
-  if (taken >= total) return { key: 'waitlist', label: ACTION_LABELS.waitlist, detail: `Full: manage the waitlist` };
-  if (taken / total < 0.5) return { key: 'promote', label: ACTION_LABELS.promote, detail: `Promote it: ${taken} of ${total} ${unit} taken` };
+  if (taken >= total) return { key: 'waitlist', label: ACTION_LABELS.waitlist, detail: 'Manage waitlist: the event is full' };
+  if (taken / total < 0.5) return { key: 'promote', label: ACTION_LABELS.promote, detail: `Promote: ${taken} of ${total} ${unit} taken` };
   return null;
 }
 
