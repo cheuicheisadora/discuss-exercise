@@ -54,13 +54,11 @@ interface RowOptions {
   opensPreview?: boolean;
   onSelect?: () => void;
   notify: Notify;
-  /** My events "Next steps": rows without a blocker also get their next step as the action button (Promote, Manage waitlist). */
-  nextStepAction?: boolean;
 }
 
-export function Row({ event: e, showTag, selected = false, opensPreview = false, onSelect, notify, nextStepAction = false }: RowOptions & { event: LibraryEvent }) {
-  const st = statusOf(e);
-  const s = { ...st, action: st.action ?? (nextStepAction ? nextStepOf(e)?.label : undefined) };
+export function Row({ event: e, showTag, selected = false, opensPreview = false, onSelect, notify }: RowOptions & { event: LibraryEvent }) {
+  // The row's button is always the event's next step (Book room, Schedule, Promote, Manage waitlist), in every list.
+  const s = { ...statusOf(e), action: nextStepOf(e)?.label };
   return (
     <EventRow
       id={rowId(e.id)}
@@ -106,7 +104,6 @@ export function RowList({ events, staggerOffset = 0, ...opts }: { events: Librar
             event={e}
             showTag={opts.showTag}
             notify={opts.notify}
-            nextStepAction={opts.nextStepAction}
             selected={opts.selectedId === e.id}
             opensPreview={!!opts.onSelectId}
             onSelect={opts.onSelectId ? () => opts.onSelectId?.(e.id) : opts.onOpen ? () => opts.onOpen?.(e) : undefined}

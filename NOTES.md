@@ -411,3 +411,14 @@ You asked to bring the "Next step" idea to My events instead of full filters (on
 - **Data change (honest note):** with the original data, none of Ana's events was under half full or full, so the new section would look exactly like the old one. To show the feature, I changed **one** value: Resume workshop (West Ashley, Ana) registrations went from "9 of 16 spots" to "6 of 16 spots". It now appears under Next steps with "Promote", and on branch pages Next step: Promote counts 7 instead of 6. No required count (week / attention per branch) changed. Revert that line in `src/data.ts` if you'd rather keep the original numbers.
 - **Files:** `src/selectors.ts` (`myNextSteps`, `myUpcoming`), `src/views/MyEvents.tsx`, `src/views/shared.tsx` (row button from the next step, messages), `src/data.ts` (one registrations value).
 - **Verified:** the new My events checks (sections, buttons Book room / Schedule / Promote, message, axe), all earlier suites (the expected order change in the scope suite aside), axe 0 violations.
+
+**Follow-up: one rule for the row button, and a logic double-check.** You noticed Resume workshop had "Promote" on My events but no button on West Ashley. The cause: I had enabled the Promote / Manage waitlist button only for My events, while Book room and Schedule came from a different rule (the status). Now every row's button comes from the same `nextStepOf()`, in every list: branch pages, All branches, My events and search results. Past rows never have one. The button, the "Next step" filter, the details panel row and the My events section therefore always agree.
+
+Then I ran a cross-check of everything that should match, on all 13 branch pages, both tabs. 409 checks, all pass:
+- **Buttons:** each row's button = the details panel's "Next step". Red/amber status ⇔ Book room / Schedule.
+- **Filter counts:** every option's count = the rows you get when you apply it, and the tab count follows. The options add up to "Any" / "All": Date (This week + Next week + Later + No date yet), Next step (incl. None), Status (Needs attention + Confirmed), Past years.
+- **Date filter vs list:** "This week", "Next week" etc. = the rows under the same list headings.
+- **Branch menu:** each summary ("2 this week · 1 needs attention") = that branch page's Date: This week and Status: Needs attention counts.
+- **My events:** Next steps + Upcoming = the tab count, the section pill = its rows, every Next steps row has a button and Upcoming rows have none.
+- **Classic list** = All branches Upcoming + Past.
+- **Search:** suggestions are always a subset of the full search results.

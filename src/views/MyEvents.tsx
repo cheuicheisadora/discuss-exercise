@@ -39,7 +39,7 @@ export function MyEvents({ scope, notify }: { scope: MyScope; notify: Notify }) 
         {nextSteps.length > 0 && (
           <section className="section" aria-labelledby="sec-next">
             <SectionLabel as="h2" id="sec-next" label="Next steps" showCount count={nextSteps.length} />
-            <RowList events={nextSteps} showTag onOpen={open} notify={notify} nextStepAction />
+            <RowList events={nextSteps} showTag onOpen={open} notify={notify} />
           </section>
         )}
 
