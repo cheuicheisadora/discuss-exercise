@@ -76,3 +76,8 @@
 @media (max-width: 699px) {
   .select-menu { max-width: calc(100vw - 2 * var(--space-16)); }
 }
+
+/* Optional count per option */
+.select-menu__option { display: flex; align-items: center; justify-content: space-between; gap: var(--space-24); }
+.select-menu__count { color: var(--color-text-muted); font: var(--text-label); }
+.select-menu__option[aria-selected='true'] .select-menu__count { color: var(--color-brand-primary); }

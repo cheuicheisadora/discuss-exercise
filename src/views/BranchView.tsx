@@ -7,9 +7,13 @@ import { SearchField } from '../components/SearchField';
 import { Select } from '../components/Select';
 import { Tab } from '../components/Tab';
 import { navigate, type Tab as TabName } from '../router';
-import { IconArrowRight } from '../icons';
+import { IconArrowRight, IconClose } from '../icons';
 import {
+  ACTION_LABELS,
   DEFAULT_FILTERS,
+  GROUP_LABELS,
+  countWith,
+  isFiltered,
   applyFilters,
   getBranch,
   getEvent,
@@ -51,7 +55,7 @@ export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, 
   const visible = applyFilters(base, f).filter((e) => matchesText(e, query, isAll));
   const selected = getEvent(eventId);
   // The active tab's count follows its filters and the search; the other tab keeps its full count.
-  const narrowed = query.trim() !== '' || f.type !== 'all' || f.status !== 'all' || f.year !== 'all';
+  const narrowed = query.trim() !== '' || isFiltered(f);
   const countFor = (t: TabName, full: number) => (t === tab && narrowed ? visible.length : full);
 
   const go = (t: TabName, ev: string | null, replace = true) =>
@@ -139,7 +143,7 @@ export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, 
       return;
     }
     announce(resultText());
-  }, [query, f.type, f.status, f.year, tab]);
+  }, [query, f.type, f.status, f.year, f.timeframe, f.action, tab]);
 
   function resultText() {
     if (base.length === 0 && tab === 'upcoming') return `No upcoming events at ${name}`;
@@ -243,7 +247,7 @@ export function BranchView({ scope, tab, eventId, menuTrigger, menuHover, menu, 
       </div>
 
       <div key={tab} className="tabpanel" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
-        <Filters tab={tab} filters={f} past={past} onChange={setFilter} />
+        <Filters tab={tab} filters={f} past={past} counted={base.filter((e) => matchesText(e, query, isAll))} onChange={setFilter} />
         <SplitView list={list} selected={selected} onSelect={(id) => go(tab, id)} notify={notify} />
       </div>
     </div>
@@ -254,44 +258,108 @@ export function Filters({
   tab,
   filters,
   past,
+  counted,
   onChange,
 }: {
   tab: TabName;
   filters: Filters;
   past: LibraryEvent[];
+  /** The list the filters narrow (after the search); used for the count shown on each option. */
+  counted?: LibraryEvent[];
   onChange: (patch: Partial<Filters>) => void;
 }) {
-  const typeOptions = [{ value: 'all', label: 'All' }, ...EVENT_TYPES];
+  const n = (patch: Partial<Filters>) => (counted ? countWith(counted, filters, patch) : undefined);
+  const typeOptions = [
+    { value: 'all', label: 'All', count: n({ type: 'all' }) },
+    ...EVENT_TYPES.map((t) => ({ ...t, count: n({ type: t.value }) })),
+  ];
   const years = yearsOf(past);
   const yearOptions = [
-    { value: 'all', label: years.length > 1 ? `${years[years.length - 1]}–${years[0]}` : String(years[0] ?? 'All') },
-    ...(years.length > 1 ? years.map((y) => ({ value: String(y), label: String(y) })) : []),
+    { value: 'all', label: years.length > 1 ? `${years[years.length - 1]}–${years[0]}` : String(years[0] ?? 'All'), count: n({ year: 'all' }) },
+    ...(years.length > 1 ? years.map((y) => ({ value: String(y), label: String(y), count: n({ year: String(y) }) })) : []),
   ];
+  const timeframeOptions = [
+    { value: 'all', label: 'Any time', count: n({ timeframe: 'all' }) },
+    ...(['this-week', 'next-week', 'later', 'none'] as const).map((k) => ({ value: k, label: GROUP_LABELS[k], count: n({ timeframe: k }) })),
+  ];
+  const statusOptions = [
+    { value: 'all', label: 'All', count: n({ status: 'all' }) },
+    { value: 'attention', label: 'Needs attention', count: n({ status: 'attention' }) },
+    { value: 'confirmed', label: 'Confirmed', count: n({ status: 'confirmed' }) },
+  ];
+  const actionOptions = [
+    { value: 'all', label: 'Any', count: n({ action: 'all' }) },
+    ...(Object.keys(ACTION_LABELS) as (keyof typeof ACTION_LABELS)[]).map((k) => ({ value: k, label: ACTION_LABELS[k], count: n({ action: k }) })),
+    { value: 'none', label: 'Nothing to do', count: n({ action: 'none' }) },
+  ];
+
+  /* Active filters as removable chips + "Clear all" (Linear, GitHub, Gmail) */
+  const shown: { key: keyof Filters; name: string; options: { value: string; label: string }[] }[] =
+    tab === 'upcoming'
+      ? [
+          { key: 'timeframe', name: 'Timeframe', options: timeframeOptions },
+          { key: 'type', name: 'Type', options: typeOptions },
+          { key: 'status', name: 'Status', options: statusOptions },
+          { key: 'action', name: 'Action', options: actionOptions },
+        ]
+      : [
+          { key: 'year', name: 'Year', options: yearOptions },
+          { key: 'type', name: 'Type', options: typeOptions },
+        ];
+  const active = shown.filter((s) => filters[s.key] !== DEFAULT_FILTERS[s.key]);
+  const chipsRef = useRef<HTMLDivElement>(null);
+  const remove = (patch: Partial<Filters>, index: number) => {
+    const root = chipsRef.current?.closest('.filters'); // the chip row may unmount
+    onChange(patch);
+    // keep keyboard users in place: next chip, else the first filter button
+    requestAnimationFrame(() => {
+      const chips = root?.querySelectorAll<HTMLButtonElement>('.filter-chip');
+      const target = chips && chips.length ? chips[Math.min(index, chips.length - 1)] : root?.querySelector<HTMLButtonElement>('.select');
+      target?.focus();
+    });
+  };
+
   return (
     <div className="filters">
       <div className="filters__group">
-        {tab === 'upcoming' ? (
-          <>
-            <Select label="Type" value={filters.type} options={typeOptions} onChange={(v) => onChange({ type: v as Filters['type'] })} />
-            <Select
-              label="Status"
-              value={filters.status}
-              options={[
-                { value: 'all', label: 'All' },
-                { value: 'attention', label: 'Needs attention' },
-                { value: 'confirmed', label: 'Confirmed' },
-              ]}
-              onChange={(v) => onChange({ status: v as Filters['status'] })}
-            />
-          </>
-        ) : (
-          <>
-            <Select label="Year" value={filters.year} options={yearOptions} onChange={(v) => onChange({ year: v })} />
-            <Select label="Type" value={filters.type} options={typeOptions} onChange={(v) => onChange({ type: v as Filters['type'] })} />
-          </>
-        )}
+        {shown.map((s) => (
+          <Select
+            key={s.key}
+            label={s.name}
+            value={filters[s.key]}
+            options={s.options}
+            onChange={(v) => onChange({ [s.key]: v } as Partial<Filters>)}
+          />
+        ))}
       </div>
       <p className="filters__sort t-label">Sorted by date</p>
+      {active.length > 0 && (
+        <div className="filter-chips" ref={chipsRef} role="group" aria-label="Active filters">
+          {active.map((s, i) => (
+            <button
+              tabIndex={0}
+              key={s.key}
+              type="button"
+              className="filter-chip t-label"
+              aria-label={`Remove filter ${s.name}: ${s.options.find((o) => o.value === filters[s.key])?.label}`}
+              onClick={() => remove({ [s.key]: DEFAULT_FILTERS[s.key] } as Partial<Filters>, i)}
+            >
+              <span className="filter-chip__name">{s.name}:</span> {s.options.find((o) => o.value === filters[s.key])?.label}
+              <IconClose className="filter-chip__x" />
+            </button>
+          ))}
+          {active.length > 1 && (
+            <button
+              tabIndex={0}
+              type="button"
+              className="filter-chips__clear t-label"
+              onClick={() => remove(Object.fromEntries(active.map((s) => [s.key, DEFAULT_FILTERS[s.key]])) as Partial<Filters>, 0)}
+            >
+              Clear all
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

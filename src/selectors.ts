@@ -210,22 +210,62 @@ export function matchesText(e: LibraryEvent, q: string, includeBranch: boolean) 
 
 export type StatusFilter = 'all' | 'attention' | 'confirmed';
 export type YearFilter = 'all' | string;
+/** Upcoming timeframe = the same groups the list shows. */
+export type TimeframeFilter = 'all' | GroupKey;
+export type ActionKey = 'book-room' | 'set-date' | 'promote' | 'waitlist';
+export type ActionFilter = 'all' | ActionKey | 'none';
 
 export interface Filters {
   type: 'all' | EventType;
   status: StatusFilter;
   year: YearFilter;
+  timeframe: TimeframeFilter;
+  action: ActionFilter;
 }
-export const DEFAULT_FILTERS: Filters = { type: 'all', status: 'all', year: 'all' };
+export const DEFAULT_FILTERS: Filters = { type: 'all', status: 'all', year: 'all', timeframe: 'all', action: 'all' };
+
+export function isFiltered(f: Filters) {
+  return (Object.keys(DEFAULT_FILTERS) as (keyof Filters)[]).some((k) => f[k] !== DEFAULT_FILTERS[k]);
+}
+
+export const ACTION_LABELS: Record<ActionKey, string> = {
+  'book-room': 'Book a room',
+  'set-date': 'Set a date',
+  promote: 'Promote it',
+  waitlist: 'Manage the waitlist',
+};
+
+/**
+ * The next thing a coordinator should do for an upcoming event, derived from its data only:
+ * a blocker (room, date), or its sign-ups ("X of Y"): full → waitlist, under half full → promote.
+ */
+export function nextStepOf(e: LibraryEvent): { key: ActionKey; label: string; detail: string } | null {
+  if (isPast(e)) return null;
+  if (e.blocker === 'needs-room') return { key: 'book-room', label: ACTION_LABELS['book-room'], detail: 'Book a room' };
+  if (e.blocker === 'not-scheduled') return { key: 'set-date', label: ACTION_LABELS['set-date'], detail: 'Set a date' };
+  const m = e.registrations?.match(/^(\d+) of (\d+) (\w+)/);
+  if (!m) return null;
+  const [taken, total, unit] = [+m[1], +m[2], m[3]];
+  if (taken >= total) return { key: 'waitlist', label: ACTION_LABELS.waitlist, detail: `Full: manage the waitlist` };
+  if (taken / total < 0.5) return { key: 'promote', label: ACTION_LABELS.promote, detail: `Promote it: ${taken} of ${total} ${unit} taken` };
+  return null;
+}
 
 export function applyFilters(list: LibraryEvent[], f: Filters) {
   return list.filter((e) => {
+    if (f.timeframe !== 'all' && (isPast(e) || groupOf(e) !== f.timeframe)) return false;
+    if (f.action !== 'all' && (nextStepOf(e)?.key ?? 'none') !== f.action) return false;
     if (f.type !== 'all' && e.type !== f.type) return false;
     if (f.status === 'attention' && !needsAttention(e)) return false;
     if (f.status === 'confirmed' && (needsAttention(e) || isPast(e))) return false;
     if (f.year !== 'all' && (e.date === null || String(yearOf(e.date)) !== f.year)) return false;
     return true;
   });
+}
+
+/** How many events a filter option would show, given the other active filters (as on Airbnb or Booking.com). */
+export function countWith(list: LibraryEvent[], f: Filters, patch: Partial<Filters>) {
+  return applyFilters(list, { ...f, ...patch }).length;
 }
 
 /** Years present in a list of past events, newest first. */

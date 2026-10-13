@@ -35,7 +35,7 @@ export function MyPastEvents({ scope, announce, notify }: { scope: MyScope; anno
       </div>
       <ScopeTabs scope={scope} counts={{ mine: myPast('mine').length, branches: myPast('branches').length }} onSelect={select} idPrefix="past" />
       <div key={scope} className="tabpanel" role="tabpanel" id={`past-panel-${scope}`} aria-labelledby={`past-tab-${scope}`}>
-        <Filters tab="past" filters={filters} past={past} onChange={(p) => setFilters((f) => ({ ...f, ...p }))} />
+        <Filters tab="past" filters={filters} past={past} counted={past} onChange={(p) => setFilters((f) => ({ ...f, ...p }))} />
         {visible.length ? (
           <section aria-label="Past events">
             <RowList events={visible} showTag onOpen={(e) => notify(actionMessage('Open full event', e))} notify={notify} />

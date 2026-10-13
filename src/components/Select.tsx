@@ -6,6 +6,8 @@ import './Select.css';
 export interface SelectOption {
   value: string;
   label: string;
+  /** Events this option would show (shown muted on the right, like Airbnb / Booking.com filters). */
+  count?: number;
 }
 
 export interface SelectProps {
@@ -158,6 +160,7 @@ export function Select({ label, value, options, onChange }: SelectProps) {
               id={optionId(i)}
               role="option"
               aria-selected={o.value === value}
+              aria-label={o.count !== undefined ? `${o.label}, ${o.count} ${o.count === 1 ? 'event' : 'events'}` : undefined}
               className={`select-menu__option t-button ${i === active ? 'select-menu__option--active' : ''}`}
               onMouseMove={() => {
                 setKeyboard(false);
@@ -166,6 +169,11 @@ export function Select({ label, value, options, onChange }: SelectProps) {
               onClick={() => choose(i)}
             >
               {o.label}
+              {o.count !== undefined && (
+                <span className="select-menu__count" aria-hidden="true">
+                  {o.count}
+                </span>
+              )}
             </li>
           ))}
         </ul>

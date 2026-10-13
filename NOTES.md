@@ -359,3 +359,28 @@ You asked for suggestions while typing in the search, e.g. "hall" showing the tw
   - 18 scripted checks: keyboard, mouse, Esc, Tab, no-match, axe with the list open, and the list fitting a 390px phone. All pass.
   - The earlier suites: palette, keyboard, the round-11 fixes, dropdown, scope, past, motion and mobile. All pass, except the old outdated subtitle check.
   - Lighthouse accessibility: 100.
+
+## 21. Timeframe, Status and Action to take filters (round 13)
+
+You liked the filters on the other prototype (discuss-exercise.vercel.app) and asked for the same, inspired by sites that do it well, without changing your structure.
+- **Same structure.** The filters row on branch pages and All branches is unchanged in place and style (same `Select` dropdowns). The Upcoming tab now has 4 filters: **Timeframe · Type · Status · Action**. Past keeps **Year · Type**.
+- **Timeframe** uses the same groups the list already shows: Any time, This week, Next week, Later, No date yet. That way the filter and the group headers always agree (like Google Calendar and Eventbrite).
+- **Status** is unchanged: All, Needs attention, Confirmed.
+- **Action to take** is derived only from data the events already have. I didn't invent any fields.
+  - **Book a room** (needs a room): 3
+  - **Set a date** (not scheduled): 1
+  - **Promote it** (under half the spots taken, e.g. "8 of 30 spots"): 6
+  - **Manage the waitlist** (full, e.g. "16 of 16 spots"): 2
+  - **Nothing to do**: 25
+  - Total on All branches: 37.
+  - The details panel shows the reason as a new **"Next step"** row, e.g. "Promote it: 14 of 35 spots taken". This way an event that looks "Confirmed" in the list explains why it's in the filter.
+- **Counts on every option** (Airbnb, Booking.com, Amazon). Each option shows how many events it would list, given the other active filters and the search. You never pick a filter that leads to an empty page without knowing it. Screen readers hear e.g. "Promote it, 6 events".
+- **Active filter chips** (Linear, GitHub, Gmail). Under the filters, each active filter shows as a chip ("Action: Promote it ×"), plus "Clear all" when there are 2 or more. Removing a chip with the keyboard moves focus to the next chip, or to the first filter when none are left.
+- **The tab count** follows the new filters too (round 11 rule).
+- **My past events** uses the same component, so its Year / Type options also show counts and chips.
+- **Files:** `src/selectors.ts` (Filters, `nextStepOf`, `countWith`, `isFiltered`), `src/views/BranchView.tsx` (Filters, chips), `src/views/MyPastEvents.tsx` (counts), `src/views/shared.tsx` ("Next step" row), `src/components/Select.tsx` + `.css` (optional count per option), `src/styles/base.css` (chips).
+- **Verified:**
+  - 18 new scripted checks: counts, combinations, tab counts, details "Next step", chip removal by keyboard, Clear all, phone without overflow, and axe with chips and an open menu. All pass.
+  - Lighthouse accessibility: 100 on All branches, a Past tab and My past events.
+  - Earlier suites: all pass after updating them. Their selectors found filters by position (Type used to be first) and by exact option name (names now include the count). The only real failures left are two outdated checks: the round-8 subtitle, and one that compares an option's raw text ("Talks" is now "Talks" + its count).
+  - Pixel comparison with production: only the filters row on Upcoming tabs changed; everything else is identical.

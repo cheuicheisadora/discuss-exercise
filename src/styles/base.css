@@ -241,3 +241,30 @@ button:focus-visible,
 
 /* Second skip link: shortcuts list, also only visible on focus */
 .skip-link--second { cursor: pointer; } /* same spot as "Skip to content": only the focused one is shown */
+
+/* ---------- Active filter chips (Linear / GitHub / Gmail pattern) ---------- */
+.filter-chips { display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap; flex-basis: 100%; }
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-8) var(--space-4) var(--space-12);
+  background: var(--color-brand-primary-soft);
+  border: 0;
+  border-radius: var(--radius-full);
+  color: var(--color-brand-primary);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+.filter-chip__name { color: var(--color-text-secondary); font-weight: inherit; }
+.filter-chip__x { width: var(--size-icon-sm); height: var(--size-icon-sm); }
+.filter-chip:hover { background: var(--color-border-default); }
+.filter-chips__clear {
+  padding: var(--space-4) var(--space-8);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-brand-primary);
+  cursor: pointer;
+}
+.filter-chips__clear:hover { text-decoration: underline; }

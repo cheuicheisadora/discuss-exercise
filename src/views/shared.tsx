@@ -13,6 +13,7 @@ import {
   monthShort,
   needsAttention,
   previewSubtitle,
+  nextStepOf,
   statusOf,
 } from '../selectors';
 
@@ -137,6 +138,7 @@ function previewDetails(e: LibraryEvent) {
   }
   return [
     { label: 'Status', value: statusOf(e).label },
+    ...(nextStepOf(e) ? [{ label: 'Next step', value: nextStepOf(e)!.detail }] : []),
     ...(e.registrations ? [{ label: 'Registrations', value: e.registrations }] : []),
     ...(e.ageGroup ? [{ label: 'Age group', value: e.ageGroup }] : []),
     { label: 'Coordinator', value: e.coordinator },
