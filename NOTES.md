@@ -394,3 +394,10 @@ You liked the filters on the other prototype (discuss-exercise.vercel.app) and a
 - **The details panel says why:** "Book room: no room yet", "Schedule: no date yet", "Promote: 14 of 35 spots taken", "Manage waitlist: the event is full".
 - **Unchanged:** Type, Status, Needs attention, Confirmed, "Clear all" (Gmail, Airbnb), "Sorted by date".
 - **Re-verified:** filter suite 18/18, earlier suites unchanged, axe 0 violations, Lighthouse accessibility 100.
+
+**Follow-up: one "Date" filter on both tabs.** The time filter had two names and two logics: "Date" on Upcoming, "Year" on Past. On top of that, the year barely filtered anything (23 of the 25 past events are from 2026). The tabs stay as they are. The Past tab's first filter is now also called **Date**, in the same place, with options suited to the past, as in Eventbrite, Gmail and Google Analytics:
+- **Options on All branches:** Any date (25), Last 30 days (16), Last 3 months (23), 2026 (23), 2025 (2).
+- **Upcoming is unchanged:** Any date, This week, Next week, Later, No date yet.
+- **Rules:** "Last 30 days" and "Last 3 months" count back from the fixed "today" (Oct 12, 2026). Years are listed only when there are past events from that year.
+- **Where else:** My past events uses the same filter, so it changed too. The internal filter key is still `year`, so other code didn't need to change.
+- **Verified:** 8 new checks (options, counts, Past tab count, chip, West Ashley 2025, My past events, axe), all earlier suites, axe 0 violations, Lighthouse accessibility 100.

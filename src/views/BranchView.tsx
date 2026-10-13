@@ -22,6 +22,7 @@ import {
   pastIn,
   plural,
   upcomingIn,
+  PAST_PERIODS,
   yearsOf,
   type Filters,
   type Scope,
@@ -275,8 +276,9 @@ export function Filters({
   ];
   const years = yearsOf(past);
   const yearOptions = [
-    { value: 'all', label: years.length > 1 ? `${years[years.length - 1]}–${years[0]}` : String(years[0] ?? 'All'), count: n({ year: 'all' }) },
-    ...(years.length > 1 ? years.map((y) => ({ value: String(y), label: String(y), count: n({ year: String(y) }) })) : []),
+    { value: 'all', label: 'Any date', count: n({ year: 'all' }) },
+    ...(Object.keys(PAST_PERIODS) as (keyof typeof PAST_PERIODS)[]).map((k) => ({ value: k, label: PAST_PERIODS[k], count: n({ year: k }) })),
+    ...years.map((y) => ({ value: String(y), label: String(y), count: n({ year: String(y) }) })),
   ];
   const timeframeOptions = [
     { value: 'all', label: 'Any date', count: n({ timeframe: 'all' }) },
@@ -303,7 +305,7 @@ export function Filters({
           { key: 'action', name: 'Next step', options: actionOptions },
         ]
       : [
-          { key: 'year', name: 'Year', options: yearOptions },
+          { key: 'year', name: 'Date', options: yearOptions },
           { key: 'type', name: 'Type', options: typeOptions },
         ];
   const active = shown.filter((s) => filters[s.key] !== DEFAULT_FILTERS[s.key]);

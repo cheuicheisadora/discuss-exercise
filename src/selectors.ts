@@ -258,7 +258,7 @@ export function applyFilters(list: LibraryEvent[], f: Filters) {
     if (f.type !== 'all' && e.type !== f.type) return false;
     if (f.status === 'attention' && !needsAttention(e)) return false;
     if (f.status === 'confirmed' && (needsAttention(e) || isPast(e))) return false;
-    if (f.year !== 'all' && (e.date === null || String(yearOf(e.date)) !== f.year)) return false;
+    if (f.year !== 'all' && !inPastPeriod(e, f.year)) return false;
     return true;
   });
 }
@@ -266,6 +266,25 @@ export function applyFilters(list: LibraryEvent[], f: Filters) {
 /** How many events a filter option would show, given the other active filters (as on Airbnb or Booking.com). */
 export function countWith(list: LibraryEvent[], f: Filters, patch: Partial<Filters>) {
   return applyFilters(list, { ...f, ...patch }).length;
+}
+
+/** Past "Date" filter: relative periods first (as in Gmail or Google Analytics), then calendar years. */
+export const PAST_PERIODS = { 'last-30': 'Last 30 days', 'last-3m': 'Last 3 months' } as const;
+function daysBefore(iso: string, days: number) {
+  const d = new Date(`${iso}T12:00:00`);
+  d.setDate(d.getDate() - days);
+  return d.toISOString().slice(0, 10);
+}
+function monthsBefore(iso: string, months: number) {
+  const d = new Date(`${iso}T12:00:00`);
+  d.setMonth(d.getMonth() - months);
+  return d.toISOString().slice(0, 10);
+}
+function inPastPeriod(e: LibraryEvent, period: string) {
+  if (e.date === null) return false;
+  if (period === 'last-30') return e.date >= daysBefore(TODAY, 30);
+  if (period === 'last-3m') return e.date >= monthsBefore(TODAY, 3);
+  return String(yearOf(e.date)) === period;
 }
 
 /** Years present in a list of past events, newest first. */

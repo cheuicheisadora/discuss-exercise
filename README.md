@@ -50,7 +50,7 @@ Examples:
 | Empty preview | Any branch page before a row is selected ("No event selected") |
 | My past events | My events → **See my past events** |
 | All branches | Branch menu → **All branches** (first row) |
-| Filters | Branch page → **Date** / **Type** / **Status** / **Next step** (Upcoming) or **Year** / **Type** (Past). Each option shows how many events it would list. Active filters appear as chips with × and "Clear all". Try All branches → Next step: Promote |
+| Filters | Branch page → **Date** / **Type** / **Status** / **Next step** (Upcoming) or **Date** / **Type** (Past: Any date, Last 30 days, Last 3 months, then each year). Each option shows how many events it would list. Active filters appear as chips with × and "Clear all". Try All branches → Next step: Promote |
 | Out-of-scope action toast | **New event**, **Book room**, **Schedule**, **Open full event**, **Reuse this event** |
 | Preview as overlay | Make the window narrower than 1100px and select a row |
 
